@@ -7,4 +7,8 @@ public class ErrorMessages {
     public static final String VALIDATION_ERROR_FULLNAME_IS_BLANK = "FullName cannot be blank";
 
     public static final String VALIDATION_ERROR_EMAIL_IS_INVALID = "Email is invalid";
+
+    public static final String CUSTOMER_ARCHIVED_ERROR = "Archived customer cannot be changed";
+
+    public static final String CUSTOMER_LOYALTY_POINTS_LESS_THAN_ZERO_ERROR = "Loyalty points cannot be less than zero";
 }

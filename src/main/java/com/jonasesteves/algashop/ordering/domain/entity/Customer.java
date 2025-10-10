@@ -1,5 +1,7 @@
 package com.jonasesteves.algashop.ordering.domain.entity;
 
+import com.jonasesteves.algashop.ordering.domain.exception.CustomerArchivedException;
+import com.jonasesteves.algashop.ordering.domain.exception.LoyaltyPointsException;
 import com.jonasesteves.algashop.ordering.domain.utility.validator.FieldValidations;
 
 import java.time.LocalDate;
@@ -30,7 +32,7 @@ public class Customer {
         this.setPhone(phone);
         this.setDocument(document);
         this.setPromotionNotificationsAllowed(promotionNotificationsAllowed);
-        this.setArchived(false);
+        this.setArchived(archived);
         this.setRegisteredAt(registeredAt);
         this.setArchivedAt(archivedAt);
         this.setLoyaltyPoints(0);
@@ -45,29 +47,52 @@ public class Customer {
         this.setDocument(document);
         this.setPromotionNotificationsAllowed(promotionNotificationsAllowed);
         this.setRegisteredAt(registeredAt);
+        this.setArchived(false);
+        this.setLoyaltyPoints(0);
     }
 
-    public void addLoyaltyPoints(Integer points) {}
+    public void addLoyaltyPoints(Integer points) {
+        verifyIfChangeable();
+        if (points <= 0) {
+            throw new LoyaltyPointsException();
+        }
+        this.setLoyaltyPoints(this.loyaltyPoints + points);
+    }
 
-    public void archive(){}
+    public void archive() {
+        verifyIfChangeable();
+        this.setArchived(true);
+        this.setArchivedAt(OffsetDateTime.now());
+        this.setFullName("Anonymous");
+        this.setPhone("000-000-0000");
+        this.setDocument("000-00-0000");
+        this.setEmail(UUID.randomUUID() + "@annonymous.com");
+        this.setBirthDate(null);
+        this.setPromotionNotificationsAllowed(false);
+    }
 
     public void enablePromotionNotifications() {
+        verifyIfChangeable();
         this.setPromotionNotificationsAllowed(true);
     }
 
     public void disablePromotionNotifications() {
+        verifyIfChangeable();
         this.setPromotionNotificationsAllowed(false);
     }
 
     public void changeName(String fullName) {
+        verifyIfChangeable();
         this.setFullName(fullName);
     }
 
     public void changeEmail(String email) {
+        verifyIfChangeable();
         this.setEmail(email);
     }
 
     public void changePhone(String phone) {
+        verifyIfChangeable();
         this.setPhone(phone);
     }
 
@@ -175,6 +200,9 @@ public class Customer {
 
     private void setLoyaltyPoints(Integer loyaltyPoints) {
         Objects.requireNonNull(loyaltyPoints);
+        if (loyaltyPoints < 0) {
+            throw new LoyaltyPointsException();
+        }
         this.loyaltyPoints = loyaltyPoints;
     }
 
@@ -188,5 +216,11 @@ public class Customer {
     @Override
     public int hashCode() {
         return Objects.hashCode(id);
+    }
+
+    private void verifyIfChangeable() {
+        if (this.isArchived()) {
+            throw new CustomerArchivedException();
+        }
     }
 }
