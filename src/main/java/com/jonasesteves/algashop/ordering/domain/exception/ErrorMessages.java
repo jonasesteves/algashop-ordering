@@ -10,5 +10,5 @@ public class ErrorMessages {
 
     public static final String CUSTOMER_ARCHIVED_ERROR = "Archived customer cannot be changed";
 
-    public static final String CUSTOMER_LOYALTY_POINTS_LESS_THAN_ZERO_ERROR = "Loyalty points cannot be less than zero";
+    public static final String CUSTOMER_LOYALTY_POINTS_LESS_THAN_ZERO_ERROR = "Loyalty value cannot be less than zero";
 }

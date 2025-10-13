@@ -1,8 +1,9 @@
 package com.jonasesteves.algashop.ordering.domain.entity;
 
 import com.jonasesteves.algashop.ordering.domain.exception.CustomerArchivedException;
-import com.jonasesteves.algashop.ordering.domain.exception.LoyaltyPointsException;
-import com.jonasesteves.algashop.ordering.domain.utility.IdGenerator;
+import com.jonasesteves.algashop.ordering.domain.valueobject.CustomerId;
+import com.jonasesteves.algashop.ordering.domain.valueobject.FullName;
+import com.jonasesteves.algashop.ordering.domain.valueobject.LoyaltyPoints;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -19,8 +20,8 @@ class CustomerTest {
         Assertions.assertThatExceptionOfType(IllegalArgumentException.class)
                 .isThrownBy(() -> {
                     new Customer(
-                            IdGenerator.generateTimeBasedUUID(),
-                            "Anthony Edward Stark",
+                            new CustomerId(),
+                            new FullName("Antony", "Edward Stark"),
                             LocalDate.of(1970, 5, 29),
                             "invalid",
                             "555-111-2222",
@@ -35,8 +36,8 @@ class CustomerTest {
     void givenInvalidEmail_whenTryUpdateCustomerEmail_shouldGenerateException() {
 
         Customer customer = new Customer(
-                IdGenerator.generateTimeBasedUUID(),
-                "Anthony Edward Stark",
+                new CustomerId(),
+                new FullName("Antony", "Edward Stark"),
                 LocalDate.of(1970, 5, 29),
                 "tony@stark.com",
                 "555-111-2222",
@@ -54,8 +55,8 @@ class CustomerTest {
     @Test
     void givenUnarchivedCustomer_whenArchive_shouldAnonymize() {
         Customer customer = new Customer(
-                IdGenerator.generateTimeBasedUUID(),
-                "Anthony Edward Stark",
+                new CustomerId(),
+                new FullName("Antony", "Edward Stark"),
                 LocalDate.of(1970, 5, 29),
                 "tony@stark.com",
                 "555-111-2222",
@@ -67,7 +68,7 @@ class CustomerTest {
         customer.archive();
 
         Assertions.assertWith(customer,
-                c -> assertThat(c.fullName()).isEqualTo("Anonymous"),
+                c -> assertThat(c.fullName()).isEqualTo(new FullName("Anonymous", "Anonymous")),
                 c -> assertThat(c.email()).isNotEqualTo("tony@stark.com"),
                 c -> assertThat(c.phone()).isEqualTo("000-000-0000"),
                 c -> assertThat(c.document()).isEqualTo("000-00-0000"),
@@ -79,8 +80,8 @@ class CustomerTest {
     @Test
     void givenArchivedCustomer_whenTryToUpdate_shouldGenerateException() {
         Customer customer = new Customer(
-                IdGenerator.generateTimeBasedUUID(),
-                "Anonymous",
+                new CustomerId(),
+                new FullName("Anonymous", "Anonymous"),
                 null,
                 "anonymous@anonymous.com",
                 "000-000-0000",
@@ -89,7 +90,7 @@ class CustomerTest {
                 true,
                 OffsetDateTime.now(),
                 OffsetDateTime.now(),
-                10
+                new LoyaltyPoints(10)
         );
 
         Assertions.assertThatExceptionOfType(CustomerArchivedException.class).isThrownBy(customer::archive);
@@ -97,15 +98,15 @@ class CustomerTest {
         Assertions.assertThatExceptionOfType(CustomerArchivedException.class).isThrownBy(customer::disablePromotionNotifications);
         Assertions.assertThatExceptionOfType(CustomerArchivedException.class).isThrownBy(() -> customer.changeEmail("any@email.com"));
         Assertions.assertThatExceptionOfType(CustomerArchivedException.class).isThrownBy(() -> customer.changePhone("555-111-2222"));
-        Assertions.assertThatExceptionOfType(CustomerArchivedException.class).isThrownBy(() -> customer.changeName("Peter Parker"));
+        Assertions.assertThatExceptionOfType(CustomerArchivedException.class).isThrownBy(() -> customer.changeName(new FullName("Anonymous", "Anonymous")));
 
     }
 
     @Test
     void givenBrandNewCustomer_whenAddLoyaltyPoints_shouldSumPoints() {
         Customer customer = new Customer(
-                IdGenerator.generateTimeBasedUUID(),
-                "Anthony Edward Stark",
+                new CustomerId(),
+                new FullName("Antony", "Edward Stark"),
                 LocalDate.of(1970, 5, 29),
                 "tony@stark.com",
                 "555-111-2222",
@@ -114,18 +115,18 @@ class CustomerTest {
                 OffsetDateTime.now()
         );
 
-        customer.addLoyaltyPoints(10);
-        customer.addLoyaltyPoints(20);
+        customer.addLoyaltyPoints(new LoyaltyPoints(10));
+        customer.addLoyaltyPoints(new LoyaltyPoints(20));
 
-        Assertions.assertThat(customer.loyaltyPoints()).isEqualTo(30);
+        Assertions.assertThat(customer.loyaltyPoints().value()).isEqualTo(30);
 
     }
 
     @Test
     void givenBrandNewCustomer_whenAddInvalidLoyaltyPoints_shouldGenerageException() {
         Customer customer = new Customer(
-                IdGenerator.generateTimeBasedUUID(),
-                "Anthony Edward Stark",
+                new CustomerId(),
+                new FullName("Antony", "Edward Stark"),
                 LocalDate.of(1970, 5, 29),
                 "tony@stark.com",
                 "555-111-2222",
@@ -134,8 +135,8 @@ class CustomerTest {
                 OffsetDateTime.now()
         );
 
-        Assertions.assertThatExceptionOfType(LoyaltyPointsException.class).isThrownBy(() -> customer.addLoyaltyPoints(0));
-        Assertions.assertThatExceptionOfType(LoyaltyPointsException.class).isThrownBy(() -> customer.addLoyaltyPoints(-5));
+        Assertions.assertThatExceptionOfType(IllegalArgumentException.class).isThrownBy(() -> customer.addLoyaltyPoints(new LoyaltyPoints(0)));
+        Assertions.assertThatExceptionOfType(IllegalArgumentException.class).isThrownBy(() -> customer.addLoyaltyPoints(new LoyaltyPoints(-10)));
 
     }
 }

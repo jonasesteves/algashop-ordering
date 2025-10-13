@@ -1,4 +1,4 @@
-package com.jonasesteves.algashop.ordering.domain.utility.validator;
+package com.jonasesteves.algashop.ordering.domain.validator;
 
 import org.apache.commons.validator.routines.EmailValidator;
 
