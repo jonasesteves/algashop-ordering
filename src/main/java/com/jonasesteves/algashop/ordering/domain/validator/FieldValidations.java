@@ -13,6 +13,13 @@ public class FieldValidations {
         requiresValidEmail(email, null);
     }
 
+    public static void requiresNonBlank(String value) {
+        Objects.requireNonNull(value);
+        if (value.isBlank()) {
+            throw new IllegalArgumentException();
+        }
+    }
+
     public static void requiresValidEmail(String email, String errorMessage) {
         Objects.requireNonNull(email, errorMessage);
         if (email.isBlank()) {

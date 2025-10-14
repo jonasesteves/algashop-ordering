@@ -8,10 +8,8 @@ import static com.jonasesteves.algashop.ordering.domain.exception.ErrorMessages.
 
 public record Email(String value) {
 
-    public Email(String value) {
-        Objects.requireNonNull(value);
+    public Email {
         FieldValidations.requiresValidEmail(value, VALIDATION_ERROR_EMAIL_IS_INVALID);
-        this.value = value;
     }
 
     @Override

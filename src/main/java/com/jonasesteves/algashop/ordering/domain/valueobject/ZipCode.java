@@ -2,17 +2,21 @@ package com.jonasesteves.algashop.ordering.domain.valueobject;
 
 import java.util.Objects;
 
-public record Document(String value) {
+public record ZipCode(String value) {
 
-    public Document {
+    public ZipCode {
         Objects.requireNonNull(value);
         if (value.isBlank()) {
+            throw new IllegalArgumentException();
+        }
+
+        if (value.length() != 5) {
             throw new IllegalArgumentException();
         }
     }
 
     @Override
     public String toString() {
-        return this.value;
+        return value;
     }
 }

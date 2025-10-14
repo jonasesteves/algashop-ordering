@@ -9,6 +9,7 @@ class DocumentTest {
     void shouldInstanceDocument() {
         Document document = new Document("1234-56-7890");
         Assertions.assertThat(document.value()).isEqualTo("1234-56-7890");
+        Assertions.assertThat(document.toString()).isEqualTo("1234-56-7890");
     }
 
     @Test

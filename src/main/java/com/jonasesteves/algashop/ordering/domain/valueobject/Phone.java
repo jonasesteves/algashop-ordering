@@ -2,9 +2,9 @@ package com.jonasesteves.algashop.ordering.domain.valueobject;
 
 import java.util.Objects;
 
-public record Document(String value) {
+public record Phone(String value) {
 
-    public Document {
+    public Phone {
         Objects.requireNonNull(value);
         if (value.isBlank()) {
             throw new IllegalArgumentException();
@@ -13,6 +13,6 @@ public record Document(String value) {
 
     @Override
     public String toString() {
-        return this.value;
+        return value;
     }
 }

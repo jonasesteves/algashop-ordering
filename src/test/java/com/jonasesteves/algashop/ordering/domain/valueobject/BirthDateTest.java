@@ -30,4 +30,10 @@ class BirthDateTest {
         Assertions.assertThat(birthDate.age()).isEqualTo(age);
     }
 
+    @Test
+    void shouldReturnCorrectBirthDateAsString() {
+        BirthDate birthDate = new BirthDate(LocalDate.now());
+        Assertions.assertThat(birthDate).hasToString(birthDate.toString());
+    }
+
 }

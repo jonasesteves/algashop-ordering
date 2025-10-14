@@ -9,6 +9,7 @@ class EmailTest {
     void shouldInstanceEmail() {
         Email email = new Email("valid@email.com");
         Assertions.assertThat(email.value()).isEqualTo("valid@email.com");
+        Assertions.assertThat(email.toString()).isEqualTo("valid@email.com");
     }
 
     @Test
