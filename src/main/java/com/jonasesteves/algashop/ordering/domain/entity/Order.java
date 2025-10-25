@@ -1,15 +1,15 @@
 package com.jonasesteves.algashop.ordering.domain.entity;
 
-import com.jonasesteves.algashop.ordering.domain.valueobject.BillingInfo;
-import com.jonasesteves.algashop.ordering.domain.valueobject.Money;
-import com.jonasesteves.algashop.ordering.domain.valueobject.Quantity;
-import com.jonasesteves.algashop.ordering.domain.valueobject.ShippingInfo;
+import com.jonasesteves.algashop.ordering.domain.valueobject.*;
 import com.jonasesteves.algashop.ordering.domain.valueobject.id.CustomerId;
 import com.jonasesteves.algashop.ordering.domain.valueobject.id.OrderId;
+import com.jonasesteves.algashop.ordering.domain.valueobject.id.ProductId;
 import lombok.Builder;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.OffsetDateTime;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
@@ -74,6 +74,23 @@ public class Order {
         );
     }
 
+    public void addItem(ProductId productId, ProductName productName, Money price, Quantity quantity) {
+        OrderItem item = OrderItem.brandNew()
+                .orderId(this.id())
+                .productId(productId)
+                .productName(productName)
+                .price(price)
+                .quantity(quantity)
+                .build();
+
+        if (this.items == null) {
+            this.items = new HashSet<>();
+        }
+
+        this.items.add(item);
+        this.recalculateTotals();
+    }
+
     public OrderId id() {
         return id;
     }
@@ -131,7 +148,7 @@ public class Order {
     }
 
     public Set<OrderItem> items() {
-        return items;
+        return Collections.unmodifiableSet(this.items);
     }
 
     private void setId(OrderId id) {
@@ -210,5 +227,27 @@ public class Order {
     @Override
     public int hashCode() {
         return Objects.hashCode(id);
+    }
+
+    private void recalculateTotals() {
+        BigDecimal totalItemsAmount = this.items().stream()
+                .map(i -> i.totalAmount().value())
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
+
+        Integer quantity = this.items().stream()
+                .map(i -> i.quantity().value())
+                .reduce(0, Integer::sum);
+
+        BigDecimal shippingCost;
+        if (this.shippingCost() == null) {
+            shippingCost = BigDecimal.ZERO;
+        } else {
+            shippingCost = this.shippingCost.value();
+        }
+
+        BigDecimal totalAmount = totalItemsAmount.add(shippingCost);
+
+        this.setTotalAmount(new Money(totalAmount));
+        this.setTotalItems(new Quantity(quantity));
     }
 }
