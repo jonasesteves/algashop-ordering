@@ -2,6 +2,7 @@ package com.jonasesteves.algashop.ordering.domain.entity;
 
 import com.jonasesteves.algashop.ordering.domain.exception.CustomerArchivedException;
 import com.jonasesteves.algashop.ordering.domain.valueobject.*;
+import com.jonasesteves.algashop.ordering.domain.valueobject.id.CustomerId;
 import lombok.Builder;
 
 import java.time.OffsetDateTime;
