@@ -1,6 +1,7 @@
 package com.jonasesteves.algashop.ordering.domain.entity;
 
 import com.jonasesteves.algashop.ordering.domain.valueobject.Money;
+import com.jonasesteves.algashop.ordering.domain.valueobject.Product;
 import com.jonasesteves.algashop.ordering.domain.valueobject.ProductName;
 import com.jonasesteves.algashop.ordering.domain.valueobject.Quantity;
 import com.jonasesteves.algashop.ordering.domain.valueobject.id.OrderId;
@@ -13,10 +14,8 @@ class OrderItemTest {
     void shouldGenerate() {
         OrderItem.brandNew()
                 .orderId(new OrderId())
-                .productId(new ProductId())
-                .productName(new ProductName("Chocolate"))
+                .product(ProductTestDataBuilder.someProduct().build())
                 .quantity(new Quantity(2))
-                .price(new Money("0.99"))
                 .build();
     }
 

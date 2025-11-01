@@ -1,6 +1,7 @@
 package com.jonasesteves.algashop.ordering.domain.entity;
 
 import com.jonasesteves.algashop.ordering.domain.valueobject.Money;
+import com.jonasesteves.algashop.ordering.domain.valueobject.Product;
 import com.jonasesteves.algashop.ordering.domain.valueobject.ProductName;
 import com.jonasesteves.algashop.ordering.domain.valueobject.Quantity;
 import com.jonasesteves.algashop.ordering.domain.valueobject.id.OrderId;
@@ -33,13 +34,17 @@ public class OrderItem {
     }
 
     @Builder(builderClassName = "BrandNewOrderItemBuilder", builderMethodName = "brandNew")
-    private static OrderItem createBrandNew(OrderId orderId, ProductId productId, ProductName productName, Money price, Quantity quantity) {
+    private static OrderItem createBrandNew(OrderId orderId, Product product, Quantity quantity) {
+        Objects.requireNonNull(orderId);
+        Objects.requireNonNull(product);
+        Objects.requireNonNull(quantity);
+
         OrderItem orderItem = new OrderItem(
                 new OrderItemId(),
                 orderId,
-                productId,
-                productName,
-                price,
+                product.id(),
+                product.name(),
+                product.price(),
                 quantity,
                 Money.ZERO
         );
@@ -75,6 +80,12 @@ public class OrderItem {
 
     public Money totalAmount() {
         return totalAmount;
+    }
+
+    void changeQuantity(Quantity quantity) {
+        Objects.requireNonNull(quantity);
+        this.setQuantity(quantity);
+        this.recalculateTotals();
     }
 
     private void setId(OrderItemId id) {
@@ -127,4 +138,5 @@ public class OrderItem {
     private void recalculateTotals() {
         this.setTotalAmount(this.price().multiply(this.quantity()));
     }
+
 }
