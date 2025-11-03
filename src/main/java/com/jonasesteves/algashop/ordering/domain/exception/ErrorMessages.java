@@ -19,9 +19,10 @@ public class ErrorMessages {
     public static final String ORDER_CANNOT_BE_PLACED_WITHOUT_ITEMS_ERROR = "Order %s cannot be placed without items";
     public static final String ORDER_CANNOT_BE_PLACED_WITHOUT_SHIPPING_INFO_ERROR = "Order %s cannot be placed without shipping info";
     public static final String ORDER_CANNOT_BE_PLACED_WITHOUT_BILLING_INFO_ERROR = "Order %s cannot be placed without billing info";
-    public static final String ORDER_CANNOT_BE_PLACED_WITHOUT_SHIPPING_COST_ERROR = "Order %s cannot be placed without shipping cost";
-    public static final String ORDER_CANNOT_BE_PLACED_WITHOUT_DELIVERY_DATE_ERROR = "Order %s cannot be placed without delivery date";
     public static final String ORDER_CANNOT_BE_PLACED_WITHOUT_PAYMENT_METHOD_ERROR = "Order %s cannot be placed without payment method";
+    public static final String ORDER_CANNOT_BE_CHANGED_ERROR = "Order %s with status %s cannot be changed";
 
     public static final String ORDER_DOES_NOT_CONTAIN_ITEM_ERROR = "Order %s does not contain item %s";
+
+    public static final String PRODUCT_OUT_OF_STOCK_ERROR = "Product %s is out of stock";
 }

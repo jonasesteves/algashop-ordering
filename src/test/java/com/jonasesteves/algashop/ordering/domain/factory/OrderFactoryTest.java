@@ -1,0 +1,44 @@
+package com.jonasesteves.algashop.ordering.domain.factory;
+
+import com.jonasesteves.algashop.ordering.domain.entity.Order;
+import com.jonasesteves.algashop.ordering.domain.entity.OrderTestDataBuilder;
+import com.jonasesteves.algashop.ordering.domain.entity.PaymentMethod;
+import com.jonasesteves.algashop.ordering.domain.entity.ProductTestDataBuilder;
+import com.jonasesteves.algashop.ordering.domain.valueobject.Billing;
+import com.jonasesteves.algashop.ordering.domain.valueobject.Product;
+import com.jonasesteves.algashop.ordering.domain.valueobject.Quantity;
+import com.jonasesteves.algashop.ordering.domain.valueobject.Shipping;
+import com.jonasesteves.algashop.ordering.domain.valueobject.id.CustomerId;
+import org.assertj.core.api.Assertions;
+import org.junit.jupiter.api.Test;
+
+class OrderFactoryTest {
+
+    @Test
+    void shouldGenerateFilledOrderThatCanBePlaced() {
+        Shipping shipping = OrderTestDataBuilder.someShipping();
+        Billing billing = OrderTestDataBuilder.someBilling();
+
+        Product product = ProductTestDataBuilder.someProduct().build();
+        PaymentMethod paymentMethod = PaymentMethod.GATEWAY_BALANCE;
+
+        Quantity quantity = new Quantity(1);
+        CustomerId customerId = new CustomerId();
+
+        Order order = OrderFactory.filled(customerId, shipping, billing, paymentMethod, product, quantity);
+
+        Assertions.assertWith(order,
+                o -> Assertions.assertThat(o.shipping()).isEqualTo(shipping),
+                o -> Assertions.assertThat(o.billing()).isEqualTo(billing),
+                o -> Assertions.assertThat(o.paymentMethod()).isEqualTo(paymentMethod),
+                o -> Assertions.assertThat(o.items()).isNotEmpty(),
+                o -> Assertions.assertThat(o.customerId()).isNotNull(),
+                o -> Assertions.assertThat(o.isDraft()).isTrue()
+        );
+
+        order.place();
+
+        Assertions.assertThat(order.isPlaced()).isTrue();
+    }
+
+}
