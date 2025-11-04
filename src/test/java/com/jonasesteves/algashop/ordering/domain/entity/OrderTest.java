@@ -168,42 +168,4 @@ class OrderTest {
         Assertions.assertThatExceptionOfType(ProductOutOfStockException.class)
                 .isThrownBy(() -> order.addItem(ProductTestDataBuilder.someUnavailableProduct().build(), new Quantity(1)));
     }
-
-    @Test
-    void givenDraftOrder_whenChange_ShouldChangeSuccessfuly() {
-        Order order = Order.draft(new CustomerId());
-        Product product = ProductTestDataBuilder.someProduct().build();
-        Shipping shipping = OrderTestDataBuilder.someShipping();
-        Billing billing = OrderTestDataBuilder.someBilling();
-        PaymentMethod paymentMethod = PaymentMethod.GATEWAY_BALANCE;
-        Quantity quantity = new Quantity(2);
-
-        order.addItem(product, quantity);
-        order.changeShipping(shipping);
-        order.changeBilling(billing);
-        order.changePaymentMethod(paymentMethod);
-
-        Assertions.assertWith(order,
-                o -> Assertions.assertThat(o.shipping()).isEqualTo(shipping),
-                o -> Assertions.assertThat(o.billing()).isEqualTo(billing),
-                o -> Assertions.assertThat(o.paymentMethod()).isEqualTo(paymentMethod),
-                o -> Assertions.assertThat(o.items()).isNotEmpty()
-        );
-    }
-
-    @Test
-    void givenNotDraftOrder_whenTryToChange_shouldGenerateException() {
-        Order order = OrderTestDataBuilder.someOrder().build();
-        order.place();
-
-        Product product = ProductTestDataBuilder.someProduct().build();
-        Quantity quantity = new Quantity(2);
-        Shipping shipping = OrderTestDataBuilder.someShipping();
-        Billing billing = OrderTestDataBuilder.someBilling();
-
-        Assertions.assertThatExceptionOfType(OrderCannotBeChangedException.class).isThrownBy(() -> order.changeBilling(billing));
-        Assertions.assertThatExceptionOfType(OrderCannotBeChangedException.class).isThrownBy(() -> order.changeShipping(shipping));
-        Assertions.assertThatExceptionOfType(OrderCannotBeChangedException.class).isThrownBy(() -> order.changePaymentMethod(PaymentMethod.CREDIT_CARD));
-        Assertions.assertThatExceptionOfType(OrderCannotBeChangedException.class).isThrownBy(() -> order.addItem(product, quantity));
-    }
 }

@@ -69,9 +69,9 @@ public class Order {
     }
 
     public void addItem(Product product, Quantity quantity) {
-        this.verifyIfChangeable();
         Objects.requireNonNull(product);
         Objects.requireNonNull(quantity);
+        this.verifyIfChangeable();
 
         product.checkOutOfStock();
 
@@ -89,6 +89,16 @@ public class Order {
         this.recalculateTotals();
     }
 
+    public void removeItem(OrderItemId itemId) {
+        Objects.requireNonNull(itemId);
+        this.verifyIfChangeable();
+
+        OrderItem orderItem = this.findOrderItem(itemId);
+
+        this.items.remove(orderItem);
+        this.recalculateTotals();
+    }
+
     public void place() {
         this.verifyIfCanChangeToPlace();
         this.setPlacedAt(OffsetDateTime.now());
@@ -96,26 +106,31 @@ public class Order {
     }
 
     public void markAsPaid() {
-        this.setPaidAt(OffsetDateTime.now());
         this.changeStatus(OrderStatus.PAID);
+        this.setPaidAt(OffsetDateTime.now());
+    }
+
+    public void markAsReady() {
+        this.changeStatus(OrderStatus.READY);
+        this.setReadyAt(OffsetDateTime.now());
     }
 
     public void changePaymentMethod(PaymentMethod paymentMethod) {
-        this.verifyIfChangeable();
         Objects.requireNonNull(paymentMethod);
+        this.verifyIfChangeable();
         this.setPaymentMethod(paymentMethod);
     }
 
     public void changeBilling(Billing billing) {
-        this.verifyIfChangeable();
         Objects.requireNonNull(billing);
+        this.verifyIfChangeable();
         this.setBilling(billing);
     }
 
     public void changeShipping(Shipping newShipping) {
         //The rules for shipping cost or delivery date is not knowed by the order, but by the post office.
-        this.verifyIfChangeable();
         Objects.requireNonNull(newShipping);
+        this.verifyIfChangeable();
 
         if (newShipping.expectedDate().isBefore(LocalDate.now())) {
             throw new InvalidOrderDeliveryShippingDateException(this.id());
@@ -125,9 +140,9 @@ public class Order {
     }
 
     public void changeItemQuantity(OrderItemId orderItemId, Quantity quantity) {
-        this.verifyIfChangeable();
         Objects.requireNonNull(orderItemId);
         Objects.requireNonNull(quantity);
+        this.verifyIfChangeable();
 
         OrderItem orderItem = this.findOrderItem(orderItemId);
         orderItem.changeQuantity(quantity);
