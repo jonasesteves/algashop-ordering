@@ -48,6 +48,7 @@ public class OrderTestDataBuilder {
                 order.markAsReady();
             }
             case CANCELED -> {
+                order.cancel();
             }
         }
 

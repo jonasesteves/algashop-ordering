@@ -1,7 +1,6 @@
 package com.jonasesteves.algashop.ordering.domain.entity;
 
 import com.jonasesteves.algashop.ordering.domain.exception.InvalidOrderDeliveryShippingDateException;
-import com.jonasesteves.algashop.ordering.domain.exception.OrderCannotBeChangedException;
 import com.jonasesteves.algashop.ordering.domain.exception.OrderStatusCannotBeChangedException;
 import com.jonasesteves.algashop.ordering.domain.exception.ProductOutOfStockException;
 import com.jonasesteves.algashop.ordering.domain.valueobject.*;
@@ -16,7 +15,7 @@ import java.util.Set;
 class OrderTest {
 
     @Test
-    public void shouldGenerateDraftOrder() {
+    void shouldGenerateDraftOrder() {
         CustomerId customerId = new CustomerId();
         Order order = Order.draft(customerId);
 
