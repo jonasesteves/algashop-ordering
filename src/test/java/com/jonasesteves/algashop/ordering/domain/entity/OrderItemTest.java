@@ -1,5 +1,6 @@
 package com.jonasesteves.algashop.ordering.domain.entity;
 
+import com.jonasesteves.algashop.ordering.domain.valueobject.Money;
 import com.jonasesteves.algashop.ordering.domain.valueobject.Product;
 import com.jonasesteves.algashop.ordering.domain.valueobject.Quantity;
 import com.jonasesteves.algashop.ordering.domain.valueobject.id.OrderId;
@@ -28,6 +29,8 @@ class OrderItemTest {
                 o -> Assertions.assertThat(o.price()).isEqualTo(product.price()),
                 o -> Assertions.assertThat(o.quantity()).isEqualTo(quantity)
         );
+
+        Assertions.assertThat(orderItem.totalAmount()).isEqualTo(new Money("6000.00"));
     }
 
 }
