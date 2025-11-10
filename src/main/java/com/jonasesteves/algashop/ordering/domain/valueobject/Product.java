@@ -17,7 +17,7 @@ public record Product(ProductId id, ProductName name, Money price, Boolean inSto
     }
 
     public void checkOutOfStock() {
-        if (!inStock()) {
+        if (Boolean.FALSE.equals(inStock())) {
             throw new ProductOutOfStockException(this.id());
         }
     }

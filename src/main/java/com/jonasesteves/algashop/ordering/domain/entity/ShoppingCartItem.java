@@ -60,7 +60,7 @@ public class ShoppingCartItem {
         return shoppingCartItem;
     }
 
-    public void changeQuantity(Quantity quantity) {
+    void changeQuantity(Quantity quantity) {
         Objects.requireNonNull(quantity);
 
         if (quantity.value() <= 0) {
@@ -71,7 +71,7 @@ public class ShoppingCartItem {
         this.recalculateTotals();
     }
 
-    public void refresh(Product product) {
+    void refresh(Product product) {
         Objects.requireNonNull(product);
 
         if (!product.id().equals(this.productId())) {

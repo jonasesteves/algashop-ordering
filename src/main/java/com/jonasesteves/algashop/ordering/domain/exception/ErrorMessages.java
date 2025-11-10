@@ -27,4 +27,7 @@ public class ErrorMessages {
     public static final String PRODUCT_OUT_OF_STOCK_ERROR = "Product %s is out of stock";
 
     public static final String SHOPPING_CART_ITEM_PRODUCT_INCOMPATIBLE_ERROR = "The product %s passed by parameter is different from the current product";
+
+    public static final String SHOPPING_CART_DOES_NOT_CONTAIN_ITEM_ID_ERROR = "The shopping cart %s does not contain item %s";
+    public static final String SHOPPING_CART_DOES_NOT_CONTAIN_PRODUCT_ID_ERROR = "The shopping cart %s does not contain product %s";
 }
