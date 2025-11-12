@@ -97,6 +97,10 @@ public class ShoppingCart {
         setTotalItems(Quantity.ZERO);
     }
 
+    public boolean isEmpty() {
+        return this.items().isEmpty();
+    }
+
     public boolean containsUnavailableItems() {
         return this.items().stream().anyMatch(i -> i.available().equals(false));
     }

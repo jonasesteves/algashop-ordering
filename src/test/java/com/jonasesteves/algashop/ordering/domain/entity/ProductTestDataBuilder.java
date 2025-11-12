@@ -7,6 +7,8 @@ import com.jonasesteves.algashop.ordering.domain.valueobject.id.ProductId;
 
 public class ProductTestDataBuilder {
 
+    public static final ProductId DEFAULT_PRODUCT_ID = new ProductId();
+
     private ProductTestDataBuilder() {}
 
     public static Product.ProductBuilder someProduct() {

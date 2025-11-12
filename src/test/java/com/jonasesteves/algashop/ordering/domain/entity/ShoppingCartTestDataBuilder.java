@@ -3,8 +3,11 @@ package com.jonasesteves.algashop.ordering.domain.entity;
 import com.jonasesteves.algashop.ordering.domain.valueobject.Product;
 import com.jonasesteves.algashop.ordering.domain.valueobject.Quantity;
 import com.jonasesteves.algashop.ordering.domain.valueobject.id.CustomerId;
+import com.jonasesteves.algashop.ordering.domain.valueobject.id.ShoppingCartId;
 
 public class ShoppingCartTestDataBuilder {
+
+    public static final ShoppingCartId DEFAULT_SHOPPING_CART_ID = new ShoppingCartId();
 
     public static ShoppingCart someShoppingCartWithProduct() {
         CustomerId customerId = new CustomerId();
