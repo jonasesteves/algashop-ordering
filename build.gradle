@@ -27,10 +27,12 @@ repositories {
 
 dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-web'
+    implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
 	implementation 'com.fasterxml.uuid:java-uuid-generator:5.1.0'
 	implementation 'commons-validator:commons-validator:1.10.0'
     implementation 'io.hypersistence:hypersistence-tsid:2.1.4'
-	compileOnly 'org.projectlombok:lombok'
+    runtimeOnly 'com.h2database:h2'
+    compileOnly 'org.projectlombok:lombok'
 	annotationProcessor 'org.projectlombok:lombok'
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 	testImplementation 'org.assertj:assertj-core:3.27.6'
