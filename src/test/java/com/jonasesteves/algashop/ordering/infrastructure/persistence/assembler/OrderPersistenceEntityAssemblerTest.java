@@ -1,4 +1,4 @@
-package com.jonasesteves.algashop.ordering.infrastructure.persistence.assimbler;
+package com.jonasesteves.algashop.ordering.infrastructure.persistence.assembler;
 
 import com.jonasesteves.algashop.ordering.domain.model.entity.Order;
 import com.jonasesteves.algashop.ordering.domain.model.entity.OrderTestDataBuilder;

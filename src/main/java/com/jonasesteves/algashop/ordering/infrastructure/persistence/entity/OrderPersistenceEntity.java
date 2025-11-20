@@ -1,9 +1,14 @@
 package com.jonasesteves.algashop.ordering.infrastructure.persistence.entity;
 
 import jakarta.persistence.Entity;
+import jakarta.persistence.EntityListeners;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import lombok.Builder;
+import org.springframework.data.annotation.CreatedBy;
+import org.springframework.data.annotation.LastModifiedBy;
+import org.springframework.data.annotation.LastModifiedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.math.BigDecimal;
 import java.time.OffsetDateTime;
@@ -12,6 +17,7 @@ import java.util.UUID;
 
 @Entity
 @Table(name = "\"order\"")
+@EntityListeners(AuditingEntityListener.class)
 @Builder
 public class OrderPersistenceEntity {
 
@@ -28,12 +34,22 @@ public class OrderPersistenceEntity {
     private OffsetDateTime canceledAt;
     private OffsetDateTime readyAt;
 
+    @CreatedBy
+    private UUID createdByUserId;
+
+    @LastModifiedDate
+    private OffsetDateTime lastModifiedAt;
+
+    @LastModifiedBy
+    private UUID lastModifiedByUserId;
+
     public OrderPersistenceEntity() {
     }
 
     public OrderPersistenceEntity(Long id, UUID customerId, BigDecimal totalAmount, Integer totalItems, String status,
                                   String paymentMethod, OffsetDateTime placedAt, OffsetDateTime paidAt,
-                                  OffsetDateTime canceledAt, OffsetDateTime readyAt) {
+                                  OffsetDateTime canceledAt, OffsetDateTime readyAt, UUID createdByUserId,
+                                  OffsetDateTime lastModifiedAt, UUID lastModifiedByUserId) {
         this.id = id;
         this.customerId = customerId;
         this.totalAmount = totalAmount;
@@ -44,6 +60,9 @@ public class OrderPersistenceEntity {
         this.paidAt = paidAt;
         this.canceledAt = canceledAt;
         this.readyAt = readyAt;
+        this.createdByUserId = createdByUserId;
+        this.lastModifiedAt = lastModifiedAt;
+        this.lastModifiedByUserId = lastModifiedByUserId;
     }
 
     public Long getId() {
@@ -124,6 +143,30 @@ public class OrderPersistenceEntity {
 
     public void setReadyAt(OffsetDateTime readyAt) {
         this.readyAt = readyAt;
+    }
+
+    public UUID getCreatedByUserId() {
+        return createdByUserId;
+    }
+
+    public void setCreatedByUserId(UUID createdByUserId) {
+        this.createdByUserId = createdByUserId;
+    }
+
+    public OffsetDateTime getLastModifiedAt() {
+        return lastModifiedAt;
+    }
+
+    public void setLastModifiedAt(OffsetDateTime lastModifiedAt) {
+        this.lastModifiedAt = lastModifiedAt;
+    }
+
+    public UUID getLastModifiedByUserId() {
+        return lastModifiedByUserId;
+    }
+
+    public void setLastModifiedByUserId(UUID lastModifiedByUserId) {
+        this.lastModifiedByUserId = lastModifiedByUserId;
     }
 
     @Override

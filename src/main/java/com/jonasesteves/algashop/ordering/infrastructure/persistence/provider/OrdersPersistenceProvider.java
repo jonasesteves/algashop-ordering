@@ -3,7 +3,8 @@ package com.jonasesteves.algashop.ordering.infrastructure.persistence.provider;
 import com.jonasesteves.algashop.ordering.domain.model.entity.Order;
 import com.jonasesteves.algashop.ordering.domain.model.repository.Orders;
 import com.jonasesteves.algashop.ordering.domain.model.valueobject.id.OrderId;
-import com.jonasesteves.algashop.ordering.infrastructure.persistence.assimbler.OrderPersistenceEntityAssembler;
+import com.jonasesteves.algashop.ordering.infrastructure.persistence.assembler.OrderPersistenceEntityAssembler;
+import com.jonasesteves.algashop.ordering.infrastructure.persistence.disassembler.OrderPersistenceEntityDisassembler;
 import com.jonasesteves.algashop.ordering.infrastructure.persistence.entity.OrderPersistenceEntity;
 import com.jonasesteves.algashop.ordering.infrastructure.persistence.repository.OrderPersistenceEntityRepository;
 import org.springframework.stereotype.Component;
@@ -15,15 +16,21 @@ public class OrdersPersistenceProvider implements Orders {
 
     private final OrderPersistenceEntityRepository orderPersistenceEntityRepository;
     private final OrderPersistenceEntityAssembler assembler;
+    private final OrderPersistenceEntityDisassembler disassembler;
 
-    public OrdersPersistenceProvider(OrderPersistenceEntityRepository orderPersistenceEntityRepository, OrderPersistenceEntityAssembler assembler) {
+    public OrdersPersistenceProvider(OrderPersistenceEntityRepository orderPersistenceEntityRepository,
+                                     OrderPersistenceEntityAssembler assembler,
+                                     OrderPersistenceEntityDisassembler disassembler) {
+
         this.orderPersistenceEntityRepository = orderPersistenceEntityRepository;
         this.assembler = assembler;
+        this.disassembler = disassembler;
     }
 
     @Override
     public Optional<Order> ofId(OrderId orderId) {
-        return Optional.empty();
+        Optional<OrderPersistenceEntity> possibleEntity = orderPersistenceEntityRepository.findById(orderId.value().toLong());
+        return possibleEntity.map(disassembler::toDomainEntity);
     }
 
     @Override
@@ -33,12 +40,29 @@ public class OrdersPersistenceProvider implements Orders {
 
     @Override
     public void add(Order aggregateRoot) {
-        OrderPersistenceEntity persistenceEntity = assembler.fromDomain(aggregateRoot);
-        orderPersistenceEntityRepository.saveAndFlush(persistenceEntity);
+        long orderId = aggregateRoot.id().value().toLong();
+        orderPersistenceEntityRepository.findById(orderId).ifPresentOrElse(
+                (persistenceEntity) -> {
+                    update(aggregateRoot, persistenceEntity);
+                },
+                () -> {
+                    insert(aggregateRoot);
+                }
+        );
     }
 
     @Override
     public int count() {
         return 0;
+    }
+
+    private void update(Order aggregateRoot, OrderPersistenceEntity orderPersistenceEntity) {
+        orderPersistenceEntity = assembler.merge(orderPersistenceEntity, aggregateRoot);
+        orderPersistenceEntityRepository.saveAndFlush(orderPersistenceEntity);
+    }
+
+    private void insert(Order aggregateRoot) {
+        OrderPersistenceEntity persistenceEntity = assembler.fromDomain(aggregateRoot);
+        orderPersistenceEntityRepository.saveAndFlush(persistenceEntity);
     }
 }

@@ -1,9 +1,11 @@
 package com.jonasesteves.algashop.ordering.domain.model.repository;
 
 import com.jonasesteves.algashop.ordering.domain.model.entity.Order;
+import com.jonasesteves.algashop.ordering.domain.model.entity.OrderStatus;
 import com.jonasesteves.algashop.ordering.domain.model.entity.OrderTestDataBuilder;
 import com.jonasesteves.algashop.ordering.domain.model.valueobject.id.OrderId;
-import com.jonasesteves.algashop.ordering.infrastructure.persistence.assimbler.OrderPersistenceEntityAssembler;
+import com.jonasesteves.algashop.ordering.infrastructure.persistence.assembler.OrderPersistenceEntityAssembler;
+import com.jonasesteves.algashop.ordering.infrastructure.persistence.disassembler.OrderPersistenceEntityDisassembler;
 import com.jonasesteves.algashop.ordering.infrastructure.persistence.provider.OrdersPersistenceProvider;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -14,7 +16,11 @@ import org.springframework.context.annotation.Import;
 import java.util.Optional;
 
 @DataJpaTest
-@Import({OrdersPersistenceProvider.class, OrderPersistenceEntityAssembler.class})
+@Import({
+        OrdersPersistenceProvider.class,
+        OrderPersistenceEntityAssembler.class,
+        OrderPersistenceEntityDisassembler.class
+})
 class OrdersIT {
 
     private Orders orders;
@@ -46,5 +52,19 @@ class OrdersIT {
                 o -> Assertions.assertThat(o.status()).isEqualTo(order.status()),
                 o -> Assertions.assertThat(o.paymentMethod()).isEqualTo(order.paymentMethod())
         );
+    }
+
+    @Test
+    void shouldUpdateExistingOrder() {
+        Order order = OrderTestDataBuilder.someOrder().orderStatus(OrderStatus.PLACED).build();
+        orders.add(order);
+
+        order = orders.ofId(order.id()).orElseThrow();
+        order.markAsPaid();
+        orders.add(order);
+
+        order = orders.ofId(order.id()).orElseThrow();
+
+        Assertions.assertThat(order.isPaid()).isTrue();
     }
 }
