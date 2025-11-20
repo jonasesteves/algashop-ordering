@@ -44,7 +44,7 @@ public class OrderPersistenceEntity {
         this.readyAt = readyAt;
     }
 
-    public Long id() {
+    public Long getId() {
         return id;
     }
 
@@ -52,7 +52,7 @@ public class OrderPersistenceEntity {
         this.id = id;
     }
 
-    public UUID customerId() {
+    public UUID getCustomerId() {
         return customerId;
     }
 
@@ -60,7 +60,7 @@ public class OrderPersistenceEntity {
         this.customerId = customerId;
     }
 
-    public BigDecimal totalAmount() {
+    public BigDecimal getTotalAmount() {
         return totalAmount;
     }
 
@@ -68,7 +68,7 @@ public class OrderPersistenceEntity {
         this.totalAmount = totalAmount;
     }
 
-    public Integer totalItems() {
+    public Integer getTotalItems() {
         return totalItems;
     }
 
@@ -76,7 +76,7 @@ public class OrderPersistenceEntity {
         this.totalItems = totalItems;
     }
 
-    public String status() {
+    public String getStatus() {
         return status;
     }
 
@@ -84,7 +84,7 @@ public class OrderPersistenceEntity {
         this.status = status;
     }
 
-    public String paymentMethod() {
+    public String getPaymentMethod() {
         return paymentMethod;
     }
 
@@ -92,7 +92,7 @@ public class OrderPersistenceEntity {
         this.paymentMethod = paymentMethod;
     }
 
-    public OffsetDateTime placedAt() {
+    public OffsetDateTime getPlacedAt() {
         return placedAt;
     }
 
@@ -100,7 +100,7 @@ public class OrderPersistenceEntity {
         this.placedAt = placedAt;
     }
 
-    public OffsetDateTime paidAt() {
+    public OffsetDateTime getPaidAt() {
         return paidAt;
     }
 
@@ -108,7 +108,7 @@ public class OrderPersistenceEntity {
         this.paidAt = paidAt;
     }
 
-    public OffsetDateTime canceledAt() {
+    public OffsetDateTime getCanceledAt() {
         return canceledAt;
     }
 
@@ -116,7 +116,7 @@ public class OrderPersistenceEntity {
         this.canceledAt = canceledAt;
     }
 
-    public OffsetDateTime readyAt() {
+    public OffsetDateTime getReadyAt() {
         return readyAt;
     }
 
