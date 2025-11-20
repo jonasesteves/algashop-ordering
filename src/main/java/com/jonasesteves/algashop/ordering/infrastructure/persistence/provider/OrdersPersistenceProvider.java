@@ -3,6 +3,7 @@ package com.jonasesteves.algashop.ordering.infrastructure.persistence.provider;
 import com.jonasesteves.algashop.ordering.domain.model.entity.Order;
 import com.jonasesteves.algashop.ordering.domain.model.repository.Orders;
 import com.jonasesteves.algashop.ordering.domain.model.valueobject.id.OrderId;
+import com.jonasesteves.algashop.ordering.infrastructure.persistence.assimbler.OrderPersistenceEntityAssembler;
 import com.jonasesteves.algashop.ordering.infrastructure.persistence.entity.OrderPersistenceEntity;
 import com.jonasesteves.algashop.ordering.infrastructure.persistence.repository.OrderPersistenceEntityRepository;
 import org.springframework.stereotype.Component;
@@ -13,9 +14,11 @@ import java.util.Optional;
 public class OrdersPersistenceProvider implements Orders {
 
     private final OrderPersistenceEntityRepository orderPersistenceEntityRepository;
+    private final OrderPersistenceEntityAssembler assembler;
 
-    public OrdersPersistenceProvider(OrderPersistenceEntityRepository orderPersistenceEntityRepository) {
+    public OrdersPersistenceProvider(OrderPersistenceEntityRepository orderPersistenceEntityRepository, OrderPersistenceEntityAssembler assembler) {
         this.orderPersistenceEntityRepository = orderPersistenceEntityRepository;
+        this.assembler = assembler;
     }
 
     @Override
@@ -30,11 +33,7 @@ public class OrdersPersistenceProvider implements Orders {
 
     @Override
     public void add(Order aggregateRoot) {
-        OrderPersistenceEntity persistenceEntity = OrderPersistenceEntity.builder()
-                .id(aggregateRoot.id().value().toLong())
-                .customerId(aggregateRoot.customerId().value())
-                .build();
-
+        OrderPersistenceEntity persistenceEntity = assembler.fromDomain(aggregateRoot);
         orderPersistenceEntityRepository.saveAndFlush(persistenceEntity);
     }
 
