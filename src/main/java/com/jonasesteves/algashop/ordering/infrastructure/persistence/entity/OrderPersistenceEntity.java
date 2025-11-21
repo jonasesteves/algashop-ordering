@@ -1,9 +1,8 @@
 package com.jonasesteves.algashop.ordering.infrastructure.persistence.entity;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.EntityListeners;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import com.jonasesteves.algashop.ordering.infrastructure.persistence.embeddable.BillingEmbeddable;
+import com.jonasesteves.algashop.ordering.infrastructure.persistence.embeddable.ShippingEmbeddable;
+import jakarta.persistence.*;
 import lombok.Builder;
 import org.springframework.data.annotation.CreatedBy;
 import org.springframework.data.annotation.LastModifiedBy;
@@ -17,8 +16,8 @@ import java.util.UUID;
 
 @Entity
 @Table(name = "\"order\"")
-@EntityListeners(AuditingEntityListener.class)
 @Builder
+@EntityListeners(AuditingEntityListener.class)
 public class OrderPersistenceEntity {
 
     @Id
@@ -43,13 +42,33 @@ public class OrderPersistenceEntity {
     @LastModifiedBy
     private UUID lastModifiedByUserId;
 
+    @Version
+    private Long version;
+
+    /*
+    (8.22) Para evitar o código abaixo, foi criada a classe HibernateConfiguration
+
+    @AttributeOverrides({
+            @AttributeOverride(name = "firstName", column = @Column(name = "billing_first_name")),
+            @AttributeOverride(name = "lastName", column = @Column(name = "billing_last_name")),
+            [...]
+            @AttributeOverride(name = "address.city", column = @Column(name = "billing_address_city")),
+    })
+    */
+    @Embedded
+    private BillingEmbeddable billing;
+
+    @Embedded
+    private ShippingEmbeddable shipping;
+
     public OrderPersistenceEntity() {
     }
 
     public OrderPersistenceEntity(Long id, UUID customerId, BigDecimal totalAmount, Integer totalItems, String status,
                                   String paymentMethod, OffsetDateTime placedAt, OffsetDateTime paidAt,
                                   OffsetDateTime canceledAt, OffsetDateTime readyAt, UUID createdByUserId,
-                                  OffsetDateTime lastModifiedAt, UUID lastModifiedByUserId) {
+                                  OffsetDateTime lastModifiedAt, UUID lastModifiedByUserId, Long version,
+                                  BillingEmbeddable billing, ShippingEmbeddable shipping) {
         this.id = id;
         this.customerId = customerId;
         this.totalAmount = totalAmount;
@@ -63,6 +82,9 @@ public class OrderPersistenceEntity {
         this.createdByUserId = createdByUserId;
         this.lastModifiedAt = lastModifiedAt;
         this.lastModifiedByUserId = lastModifiedByUserId;
+        this.version = version;
+        this.billing = billing;
+        this.shipping = shipping;
     }
 
     public Long getId() {
@@ -145,6 +167,22 @@ public class OrderPersistenceEntity {
         this.readyAt = readyAt;
     }
 
+    public BillingEmbeddable getBilling() {
+        return billing;
+    }
+
+    public void setBilling(BillingEmbeddable billing) {
+        this.billing = billing;
+    }
+
+    public ShippingEmbeddable getShipping() {
+        return shipping;
+    }
+
+    public void setShipping(ShippingEmbeddable shipping) {
+        this.shipping = shipping;
+    }
+
     public UUID getCreatedByUserId() {
         return createdByUserId;
     }
@@ -167,6 +205,14 @@ public class OrderPersistenceEntity {
 
     public void setLastModifiedByUserId(UUID lastModifiedByUserId) {
         this.lastModifiedByUserId = lastModifiedByUserId;
+    }
+
+    public Long getVersion() {
+        return version;
+    }
+
+    public void setVersion(Long version) {
+        this.version = version;
     }
 
     @Override

@@ -7,8 +7,11 @@ import com.jonasesteves.algashop.ordering.infrastructure.persistence.assembler.O
 import com.jonasesteves.algashop.ordering.infrastructure.persistence.disassembler.OrderPersistenceEntityDisassembler;
 import com.jonasesteves.algashop.ordering.infrastructure.persistence.entity.OrderPersistenceEntity;
 import com.jonasesteves.algashop.ordering.infrastructure.persistence.repository.OrderPersistenceEntityRepository;
+import jakarta.persistence.EntityManager;
 import org.springframework.stereotype.Component;
+import org.springframework.util.ReflectionUtils;
 
+import java.lang.reflect.Field;
 import java.util.Optional;
 
 @Component
@@ -17,14 +20,17 @@ public class OrdersPersistenceProvider implements Orders {
     private final OrderPersistenceEntityRepository orderPersistenceEntityRepository;
     private final OrderPersistenceEntityAssembler assembler;
     private final OrderPersistenceEntityDisassembler disassembler;
+    private final EntityManager entityManager;
 
     public OrdersPersistenceProvider(OrderPersistenceEntityRepository orderPersistenceEntityRepository,
                                      OrderPersistenceEntityAssembler assembler,
-                                     OrderPersistenceEntityDisassembler disassembler) {
+                                     OrderPersistenceEntityDisassembler disassembler,
+                                     EntityManager entityManager) {
 
         this.orderPersistenceEntityRepository = orderPersistenceEntityRepository;
         this.assembler = assembler;
         this.disassembler = disassembler;
+        this.entityManager = entityManager;
     }
 
     @Override
@@ -58,11 +64,25 @@ public class OrdersPersistenceProvider implements Orders {
 
     private void update(Order aggregateRoot, OrderPersistenceEntity orderPersistenceEntity) {
         orderPersistenceEntity = assembler.merge(orderPersistenceEntity, aggregateRoot);
-        orderPersistenceEntityRepository.saveAndFlush(orderPersistenceEntity);
+        entityManager.detach(orderPersistenceEntity);
+        orderPersistenceEntity = orderPersistenceEntityRepository.saveAndFlush(orderPersistenceEntity);
+        updateVersion(aggregateRoot, orderPersistenceEntity);
     }
 
     private void insert(Order aggregateRoot) {
         OrderPersistenceEntity persistenceEntity = assembler.fromDomain(aggregateRoot);
         orderPersistenceEntityRepository.saveAndFlush(persistenceEntity);
+        updateVersion(aggregateRoot, persistenceEntity);
+    }
+
+    private void updateVersion(Order aggregateRoot, OrderPersistenceEntity orderPersistenceEntity) {
+        try {
+            Field version = aggregateRoot.getClass().getDeclaredField("version");
+            version.setAccessible(true);
+            ReflectionUtils.setField(version, aggregateRoot, orderPersistenceEntity.getVersion());
+            version.setAccessible(false);
+        } catch (NoSuchFieldException e) {
+            throw new RuntimeException("Error updating version", e);
+        }
     }
 }

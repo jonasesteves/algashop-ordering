@@ -28,6 +28,7 @@ public class OrderPersistenceEntityDisassembler {
                 .canceledAt(orderPersistenceEntity.getCanceledAt())
                 .readyAt(orderPersistenceEntity.getReadyAt())
                 .items(new HashSet<>())
+                .version(orderPersistenceEntity.getVersion())
                 .build();
     }
 }
