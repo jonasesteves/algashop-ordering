@@ -13,6 +13,8 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.context.annotation.Import;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 
 @DataJpaTest
 @Import({
@@ -22,8 +24,8 @@ import org.springframework.context.annotation.Import;
         SpringDataAuditingConfig.class
 })
 class OrdersPersistenceProviderIT {
-    private OrdersPersistenceProvider ordersPersistenceProvider;
-    private OrderPersistenceEntityRepository entityRepository;
+    private final OrdersPersistenceProvider ordersPersistenceProvider;
+    private final OrderPersistenceEntityRepository entityRepository;
 
     @Autowired
     public OrdersPersistenceProviderIT(OrdersPersistenceProvider ordersPersistenceProvider, OrderPersistenceEntityRepository entityRepository) {
@@ -32,7 +34,7 @@ class OrdersPersistenceProviderIT {
     }
 
     @Test
-    public void shouldUpdateAndKeepPersistenceEntityState() {
+    void shouldUpdateAndKeepPersistenceEntityState() {
         Order order = OrderTestDataBuilder.someOrder().orderStatus(OrderStatus.PLACED).build();
         long orderId = order.id().value().toLong();
         ordersPersistenceProvider.add(order);
@@ -53,5 +55,16 @@ class OrdersPersistenceProviderIT {
         Assertions.assertThat(persistenceEntity.getCreatedByUserId()).isNotNull();
         Assertions.assertThat(persistenceEntity.getLastModifiedAt()).isNotNull();
         Assertions.assertThat(persistenceEntity.getLastModifiedByUserId()).isNotNull();
+    }
+
+    @Test
+    @Transactional(propagation = Propagation.NOT_SUPPORTED)
+    void shouldAddAndFindAndNotFailWhenNoTransaction() {
+        Order order = OrderTestDataBuilder.someOrder().build();
+        ordersPersistenceProvider.add(order);
+
+        Assertions.assertThatNoException().isThrownBy(
+                () -> ordersPersistenceProvider.ofId(order.id()).orElseThrow()
+        );
     }
 }

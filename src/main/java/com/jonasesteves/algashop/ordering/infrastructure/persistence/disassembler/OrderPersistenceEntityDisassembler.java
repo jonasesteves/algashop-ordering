@@ -1,19 +1,25 @@
 package com.jonasesteves.algashop.ordering.infrastructure.persistence.disassembler;
 
 import com.jonasesteves.algashop.ordering.domain.model.entity.Order;
+import com.jonasesteves.algashop.ordering.domain.model.entity.OrderItem;
 import com.jonasesteves.algashop.ordering.domain.model.entity.OrderStatus;
 import com.jonasesteves.algashop.ordering.domain.model.entity.PaymentMethod;
 import com.jonasesteves.algashop.ordering.domain.model.valueobject.*;
 import com.jonasesteves.algashop.ordering.domain.model.valueobject.id.CustomerId;
 import com.jonasesteves.algashop.ordering.domain.model.valueobject.id.OrderId;
+import com.jonasesteves.algashop.ordering.domain.model.valueobject.id.OrderItemId;
+import com.jonasesteves.algashop.ordering.domain.model.valueobject.id.ProductId;
 import com.jonasesteves.algashop.ordering.infrastructure.persistence.embeddable.AddressEmbeddable;
 import com.jonasesteves.algashop.ordering.infrastructure.persistence.embeddable.BillingEmbeddable;
 import com.jonasesteves.algashop.ordering.infrastructure.persistence.embeddable.RecipientEmbeddable;
 import com.jonasesteves.algashop.ordering.infrastructure.persistence.embeddable.ShippingEmbeddable;
+import com.jonasesteves.algashop.ordering.infrastructure.persistence.entity.OrderItemPersistenceEntity;
 import com.jonasesteves.algashop.ordering.infrastructure.persistence.entity.OrderPersistenceEntity;
 import org.springframework.stereotype.Component;
 
 import java.util.HashSet;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @Component
 public class OrderPersistenceEntityDisassembler {
@@ -30,11 +36,27 @@ public class OrderPersistenceEntityDisassembler {
                 .paidAt(orderPersistenceEntity.getPaidAt())
                 .canceledAt(orderPersistenceEntity.getCanceledAt())
                 .readyAt(orderPersistenceEntity.getReadyAt())
-                .items(new HashSet<>())
+                .items(this.items(orderPersistenceEntity.getItems()))
                 .version(orderPersistenceEntity.getVersion())
                 .billing(this.billing(orderPersistenceEntity.getBilling()))
                 .shipping(this.shipping(orderPersistenceEntity.getShipping()))
                 .build();
+    }
+
+    private Set<OrderItem> items(Set<OrderItemPersistenceEntity> orderItemsPersistenceEntity) {
+        if (orderItemsPersistenceEntity == null || orderItemsPersistenceEntity.isEmpty()) return new HashSet<>();
+
+        return orderItemsPersistenceEntity.stream()
+                .map(item -> OrderItem.existing()
+                        .id(new OrderItemId(item.getId()))
+                        .orderId(new OrderId(item.getOrderId()))
+                        .productId(new ProductId(item.getProductId()))
+                        .productName(new ProductName(item.getProductName()))
+                        .price(new Money(item.getPrice()))
+                        .quantity(new Quantity(item.getQuantity()))
+                        .totalAmount(new Money(item.getTotalAmount()))
+                        .build())
+                .collect(Collectors.toSet());
     }
 
     private Billing billing(BillingEmbeddable billingEmbeddable) {

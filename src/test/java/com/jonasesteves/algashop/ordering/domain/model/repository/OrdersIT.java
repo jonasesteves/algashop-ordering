@@ -89,4 +89,25 @@ class OrdersIT {
         Assertions.assertThat(savedOrder.canceledAt()).isNull();
         Assertions.assertThat(savedOrder.paidAt()).isNotNull();
     }
+
+    @Test
+    void shouldCountExistingOrders() {
+        Assertions.assertThat(orders.count()).isZero();
+
+        Order order1 = OrderTestDataBuilder.someOrder().build();
+        Order order2 = OrderTestDataBuilder.someOrder().build();
+        orders.add(order1);
+        orders.add(order2);
+
+        Assertions.assertThat(orders.count()).isEqualTo(2L);
+    }
+
+    @Test
+    void shouldReturnIfOrderExists() {
+        Order order = OrderTestDataBuilder.someOrder().build();
+        orders.add(order);
+
+        Assertions.assertThat(orders.exists(order.id())).isTrue();
+        Assertions.assertThat(orders.exists(new OrderId())).isFalse();
+    }
 }

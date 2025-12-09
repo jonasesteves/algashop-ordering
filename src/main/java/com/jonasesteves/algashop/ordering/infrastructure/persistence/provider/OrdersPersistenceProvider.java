@@ -9,12 +9,14 @@ import com.jonasesteves.algashop.ordering.infrastructure.persistence.entity.Orde
 import com.jonasesteves.algashop.ordering.infrastructure.persistence.repository.OrderPersistenceEntityRepository;
 import jakarta.persistence.EntityManager;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.ReflectionUtils;
 
 import java.lang.reflect.Field;
 import java.util.Optional;
 
 @Component
+@Transactional(readOnly = true)
 public class OrdersPersistenceProvider implements Orders {
 
     private final OrderPersistenceEntityRepository orderPersistenceEntityRepository;
@@ -41,10 +43,11 @@ public class OrdersPersistenceProvider implements Orders {
 
     @Override
     public boolean exists(OrderId orderId) {
-        return false;
+        return orderPersistenceEntityRepository.existsById(orderId.value().toLong());
     }
 
     @Override
+    @Transactional(readOnly = false)
     public void add(Order aggregateRoot) {
         long orderId = aggregateRoot.id().value().toLong();
         orderPersistenceEntityRepository.findById(orderId).ifPresentOrElse(
@@ -58,8 +61,8 @@ public class OrdersPersistenceProvider implements Orders {
     }
 
     @Override
-    public int count() {
-        return 0;
+    public long count() {
+        return orderPersistenceEntityRepository.count();
     }
 
     private void update(Order aggregateRoot, OrderPersistenceEntity orderPersistenceEntity) {
