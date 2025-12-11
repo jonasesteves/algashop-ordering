@@ -9,6 +9,8 @@ import jakarta.persistence.Embedded;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EntityListeners;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import jakarta.persistence.Version;
@@ -33,7 +35,9 @@ public class OrderPersistenceEntity {
     @Id
     private Long id; //TSID
 
-    private UUID customerId;
+    @JoinColumn
+    @ManyToOne(optional = false)
+    private CustomerPersistenceEntity customer;
     private BigDecimal totalAmount;
     private Integer totalItems;
     private String status;
@@ -93,13 +97,13 @@ public class OrderPersistenceEntity {
     }
 
     @Builder
-    public OrderPersistenceEntity(Long id, UUID customerId, BigDecimal totalAmount, Integer totalItems, String status,
+    public OrderPersistenceEntity(Long id, CustomerPersistenceEntity customer, BigDecimal totalAmount, Integer totalItems, String status,
                                   String paymentMethod, OffsetDateTime placedAt, OffsetDateTime paidAt,
                                   OffsetDateTime canceledAt, OffsetDateTime readyAt, UUID createdByUserId,
                                   OffsetDateTime lastModifiedAt, UUID lastModifiedByUserId, Long version,
                                   BillingEmbeddable billing, ShippingEmbeddable shipping, Set<OrderItemPersistenceEntity> items) {
         this.id = id;
-        this.customerId = customerId;
+        this.customer = customer;
         this.totalAmount = totalAmount;
         this.totalItems = totalItems;
         this.status = status;
@@ -125,12 +129,12 @@ public class OrderPersistenceEntity {
         this.id = id;
     }
 
-    public UUID getCustomerId() {
-        return customerId;
+    public CustomerPersistenceEntity getCustomer() {
+        return customer;
     }
 
-    public void setCustomerId(UUID customerId) {
-        this.customerId = customerId;
+    public void setCustomer(CustomerPersistenceEntity customer) {
+        this.customer = customer;
     }
 
     public BigDecimal getTotalAmount() {
@@ -291,5 +295,10 @@ public class OrderPersistenceEntity {
         return "OrderPersistenceEntity{" +
                 "id=" + id +
                 '}';
+    }
+
+    public UUID getCustomerId() {
+        if (this.customer == null) return null;
+        return this.customer.getId();
     }
 }

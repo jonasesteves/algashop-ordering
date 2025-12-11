@@ -103,11 +103,12 @@ class CustomersIT {
         Assertions.assertThat(customers.count()).isZero();
 
         Customer customer1 = CustomerTestDataBuilder.existingCustomer().build();
-        Customer customer2 = CustomerTestDataBuilder.existingCustomer().build();
         customers.add(customer1);
+
+        Customer customer2 = CustomerTestDataBuilder.existingCustomer().id(new CustomerId()).build();
         customers.add(customer2);
 
-        Assertions.assertThat(customers.count()).isEqualTo(2);
+        Assertions.assertThat(customers.count()).isEqualTo(2L);
     }
 
     @Test

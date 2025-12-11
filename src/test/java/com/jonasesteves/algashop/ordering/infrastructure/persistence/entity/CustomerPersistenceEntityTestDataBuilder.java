@@ -1,18 +1,21 @@
 package com.jonasesteves.algashop.ordering.infrastructure.persistence.entity;
 
-import com.jonasesteves.algashop.ordering.domain.model.utility.IdGenerator;
-import com.jonasesteves.algashop.ordering.infrastructure.persistence.entity.CustomerPersistenceEntity.CustomerPersistenceEntityBuilder;
+import com.jonasesteves.algashop.ordering.domain.model.valueobject.id.CustomerId;
+import com.jonasesteves.algashop.ordering.infrastructure.persistence.embeddable.AddressEmbeddable;
 
 import java.time.LocalDate;
+import java.time.OffsetDateTime;
+
+import static com.jonasesteves.algashop.ordering.domain.model.entity.CustomerTestDataBuilder.DEFAULT_CUSTOMER_ID;
 
 public class CustomerPersistenceEntityTestDataBuilder {
 
     private CustomerPersistenceEntityTestDataBuilder() {
     }
 
-    public static CustomerPersistenceEntityBuilder someCustomer() {
+    public static CustomerPersistenceEntity.CustomerPersistenceEntityBuilder someCustomer() {
         return CustomerPersistenceEntity.builder()
-                .id(IdGenerator.generateTimeBasedUUID())
+                .id(DEFAULT_CUSTOMER_ID.value())
                 .firstName("Ronaldinho")
                 .lastName("Gaúcho")
                 .birthDate(LocalDate.of(1980, 1, 1))
@@ -20,6 +23,19 @@ public class CustomerPersistenceEntityTestDataBuilder {
                 .phone("56998876655")
                 .document("456123789")
                 .promotionNotificationsAllowed(false)
-                .loyaltyPoints(10);
+                .loyaltyPoints(10)
+                .registeredAt(OffsetDateTime.now())
+                .archived(false)
+                .archivedAt(null)
+                .address(AddressEmbeddable.builder()
+                        .number("123")
+                        .state("Twenty Street")
+                        .complement("A")
+                        .neighborhood("Village Neighborhood")
+                        .city("SimCity")
+                        .state("SimState")
+                        .zipCode("34434")
+                        .build()
+                );
     }
 }

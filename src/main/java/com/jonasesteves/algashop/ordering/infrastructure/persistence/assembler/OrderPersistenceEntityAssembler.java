@@ -10,8 +10,10 @@ import com.jonasesteves.algashop.ordering.infrastructure.persistence.embeddable.
 import com.jonasesteves.algashop.ordering.infrastructure.persistence.embeddable.BillingEmbeddable;
 import com.jonasesteves.algashop.ordering.infrastructure.persistence.embeddable.RecipientEmbeddable;
 import com.jonasesteves.algashop.ordering.infrastructure.persistence.embeddable.ShippingEmbeddable;
+import com.jonasesteves.algashop.ordering.infrastructure.persistence.entity.CustomerPersistenceEntity;
 import com.jonasesteves.algashop.ordering.infrastructure.persistence.entity.OrderItemPersistenceEntity;
 import com.jonasesteves.algashop.ordering.infrastructure.persistence.entity.OrderPersistenceEntity;
+import com.jonasesteves.algashop.ordering.infrastructure.persistence.repository.CustomerPersistenceEntityRepository;
 import org.springframework.stereotype.Component;
 
 import java.util.HashSet;
@@ -22,13 +24,18 @@ import java.util.stream.Collectors;
 @Component
 public class OrderPersistenceEntityAssembler {
 
+    private final CustomerPersistenceEntityRepository repository;
+
+    public OrderPersistenceEntityAssembler(CustomerPersistenceEntityRepository repository) {
+        this.repository = repository;
+    }
+
     public OrderPersistenceEntity fromDomain(Order order) {
         return merge(new OrderPersistenceEntity(), order);
     }
 
     public OrderPersistenceEntity merge(OrderPersistenceEntity orderPersistenceEntity, Order order) {
         orderPersistenceEntity.setId(order.id().value().toLong());
-        orderPersistenceEntity.setCustomerId(order.customerId().value());
         orderPersistenceEntity.setTotalAmount(order.totalAmount().value());
         orderPersistenceEntity.setTotalItems(order.totalItems().value());
         orderPersistenceEntity.setStatus(order.status().name());
@@ -43,6 +50,10 @@ public class OrderPersistenceEntityAssembler {
 
         Set<OrderItemPersistenceEntity> mergedItems = mergeItems(order, orderPersistenceEntity);
         orderPersistenceEntity.replaceItems(mergedItems);
+
+        var customerPersistenceEntity = repository.getReferenceById(order.customerId().value());
+        orderPersistenceEntity.setCustomer(customerPersistenceEntity);
+
         return orderPersistenceEntity;
     }
 

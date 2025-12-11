@@ -2,6 +2,7 @@ package com.jonasesteves.algashop.ordering.infrastructure.persistence.embeddable
 
 import com.jonasesteves.algashop.ordering.domain.model.valueobject.ZipCode;
 import jakarta.persistence.Embeddable;
+import lombok.Builder;
 
 import java.util.Objects;
 
@@ -18,6 +19,7 @@ public class AddressEmbeddable {
     public AddressEmbeddable() {
     }
 
+    @Builder
     public AddressEmbeddable(String number, String street, String complement, String neighborhood, String city, String state, String zipCode) {
         this.number = number;
         this.street = street;
