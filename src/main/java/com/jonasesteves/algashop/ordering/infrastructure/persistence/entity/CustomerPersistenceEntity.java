@@ -59,6 +59,7 @@ public class CustomerPersistenceEntity {
     @LastModifiedBy
     private UUID lastModifiedByUserId;
 
+    /* (8.17 à 8.19) */
     @Version
     private Long version;
 

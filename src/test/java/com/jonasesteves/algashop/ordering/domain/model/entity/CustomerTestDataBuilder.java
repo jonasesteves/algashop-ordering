@@ -34,9 +34,6 @@ public class CustomerTestDataBuilder {
     public static Customer.ExistingCustomerBuild existingCustomer() {
         return Customer.existing()
                 .id(new CustomerId())
-                .archived(false)
-                .registeredAt(OffsetDateTime.now())
-                .archivedAt(null)
                 .fullName(new FullName("Antony", "Edward Stark"))
                 .birthDate(new BirthDate(LocalDate.of(1970, 5, 29)))
                 .email(new Email("tony@stark.com"))
@@ -44,6 +41,9 @@ public class CustomerTestDataBuilder {
                 .document(new Document("0102-03-0405"))
                 .promotionNotificationsAllowed(false)
                 .loyaltyPoints(new LoyaltyPoints(10))
+                .archived(false)
+                .archivedAt(null)
+                .registeredAt(OffsetDateTime.now())
                 .address(
                         Address.builder()
                                 .number("10880")

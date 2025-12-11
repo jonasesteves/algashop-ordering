@@ -16,6 +16,7 @@ import java.util.UUID;
         dateTimeProviderRef = "auditingDateTimeProvider",
         auditorAwareRef = "auditorProvider"
 )
+/* (8.15) */
 public class SpringDataAuditingConfig {
 
     @Bean

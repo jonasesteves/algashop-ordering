@@ -24,7 +24,7 @@ import java.util.Optional;
 })
 class OrdersIT {
 
-    private Orders orders;
+    private final Orders orders;
 
     @Autowired
     public OrdersIT(Orders orders) {

@@ -24,10 +24,11 @@ public class OrdersPersistenceProvider implements Orders {
     private final OrderPersistenceEntityDisassembler disassembler;
     private final EntityManager entityManager;
 
-    public OrdersPersistenceProvider(OrderPersistenceEntityRepository orderPersistenceEntityRepository,
-                                     OrderPersistenceEntityAssembler assembler,
-                                     OrderPersistenceEntityDisassembler disassembler,
-                                     EntityManager entityManager) {
+    public OrdersPersistenceProvider(
+            OrderPersistenceEntityRepository orderPersistenceEntityRepository,
+            OrderPersistenceEntityAssembler assembler,
+            OrderPersistenceEntityDisassembler disassembler,
+            EntityManager entityManager) {
 
         this.orderPersistenceEntityRepository = orderPersistenceEntityRepository;
         this.assembler = assembler;
@@ -67,6 +68,7 @@ public class OrdersPersistenceProvider implements Orders {
 
     private void update(Order aggregateRoot, OrderPersistenceEntity orderPersistenceEntity) {
         orderPersistenceEntity = assembler.merge(orderPersistenceEntity, aggregateRoot);
+        /* (8.19 - 10:00) */
         entityManager.detach(orderPersistenceEntity);
         orderPersistenceEntity = orderPersistenceEntityRepository.saveAndFlush(orderPersistenceEntity);
         updateVersion(aggregateRoot, orderPersistenceEntity);
@@ -78,6 +80,7 @@ public class OrdersPersistenceProvider implements Orders {
         updateVersion(aggregateRoot, persistenceEntity);
     }
 
+    /* (8.20)  */
     private void updateVersion(Order aggregateRoot, OrderPersistenceEntity orderPersistenceEntity) {
         try {
             Field version = aggregateRoot.getClass().getDeclaredField("version");
