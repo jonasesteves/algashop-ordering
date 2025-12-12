@@ -16,6 +16,7 @@ import org.springframework.context.annotation.Import;
 import org.springframework.orm.ObjectOptimisticLockingFailureException;
 
 import java.util.Optional;
+import java.util.UUID;
 
 @DataJpaTest
 @Import({
@@ -102,7 +103,7 @@ class CustomersIT {
     void shouldCountExistingCustomers() {
         Assertions.assertThat(customers.count()).isZero();
 
-        Customer customer1 = CustomerTestDataBuilder.existingCustomer().build();
+        Customer customer1 = CustomerTestDataBuilder.existingCustomer().id(new CustomerId()).build();
         customers.add(customer1);
 
         Customer customer2 = CustomerTestDataBuilder.existingCustomer().id(new CustomerId()).build();
@@ -118,5 +119,31 @@ class CustomersIT {
 
         Assertions.assertThat(customers.exists(customer.id())).isTrue();
         Assertions.assertThat(customers.exists(new CustomerId())).isFalse();
+    }
+
+    @Test
+    void shouldFindByEmail() {
+        Customer customer = CustomerTestDataBuilder.existingCustomer().build();
+        customers.add(customer);
+
+        Optional<Customer> customerOptional = customers.ofEmail(customer.email());
+
+        Assertions.assertThat(customerOptional).isPresent();
+    }
+
+    @Test
+    void shouldNotFindByEmailIfCustomerDoesNotExist() {
+        Optional<Customer> customerOptional = customers.ofEmail(new Email(UUID.randomUUID() + "@email.com"));
+        Assertions.assertThat(customerOptional).isNotPresent();
+    }
+
+    @Test
+    void shouldReturnIfEmailIsInUse() {
+        Customer customer = CustomerTestDataBuilder.brandNewCustomerBuild().build();
+        customers.add(customer);
+
+        Assertions.assertThat(customers.isEmailUnique(customer.email(), customer.id())).isTrue();
+        Assertions.assertThat(customers.isEmailUnique(customer.email(), new CustomerId())).isFalse();
+        Assertions.assertThat(customers.isEmailUnique(new Email("some@email.com"), new CustomerId())).isTrue();
     }
 }

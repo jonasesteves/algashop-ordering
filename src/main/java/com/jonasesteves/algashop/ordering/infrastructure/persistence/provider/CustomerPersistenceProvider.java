@@ -2,6 +2,7 @@ package com.jonasesteves.algashop.ordering.infrastructure.persistence.provider;
 
 import com.jonasesteves.algashop.ordering.domain.model.entity.Customer;
 import com.jonasesteves.algashop.ordering.domain.model.repository.Customers;
+import com.jonasesteves.algashop.ordering.domain.model.valueobject.Email;
 import com.jonasesteves.algashop.ordering.domain.model.valueobject.id.CustomerId;
 import com.jonasesteves.algashop.ordering.infrastructure.persistence.assembler.CustomerPersistenceEntityAssembler;
 import com.jonasesteves.algashop.ordering.infrastructure.persistence.disassembler.CustomerPersistenceEntityDisassembler;
@@ -60,6 +61,16 @@ public class CustomerPersistenceProvider implements Customers {
     @Override
     public long count() {
         return repository.count();
+    }
+
+    @Override
+    public Optional<Customer> ofEmail(Email email) {
+        return repository.findByEmail(email.value()).map(disassembler::toDomain);
+    }
+
+    @Override
+    public boolean isEmailUnique(Email email, CustomerId exceptCustomerId) {
+        return !repository.existsByEmailAndIdNot(email.value(), exceptCustomerId.value());
     }
 
     private void update(Customer aggregateRoot, CustomerPersistenceEntity customerPersistenceEntity) {

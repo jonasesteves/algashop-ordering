@@ -4,6 +4,8 @@ import com.jonasesteves.algashop.ordering.domain.model.entity.CustomerTestDataBu
 import com.jonasesteves.algashop.ordering.domain.model.entity.Order;
 import com.jonasesteves.algashop.ordering.domain.model.entity.OrderStatus;
 import com.jonasesteves.algashop.ordering.domain.model.entity.OrderTestDataBuilder;
+import com.jonasesteves.algashop.ordering.domain.model.valueobject.Money;
+import com.jonasesteves.algashop.ordering.domain.model.valueobject.id.CustomerId;
 import com.jonasesteves.algashop.ordering.domain.model.valueobject.id.OrderId;
 import com.jonasesteves.algashop.ordering.infrastructure.persistence.assembler.CustomerPersistenceEntityAssembler;
 import com.jonasesteves.algashop.ordering.infrastructure.persistence.assembler.OrderPersistenceEntityAssembler;
@@ -11,6 +13,7 @@ import com.jonasesteves.algashop.ordering.infrastructure.persistence.disassemble
 import com.jonasesteves.algashop.ordering.infrastructure.persistence.disassembler.OrderPersistenceEntityDisassembler;
 import com.jonasesteves.algashop.ordering.infrastructure.persistence.provider.CustomerPersistenceProvider;
 import com.jonasesteves.algashop.ordering.infrastructure.persistence.provider.OrdersPersistenceProvider;
+import org.aspectj.weaver.ast.Or;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -19,6 +22,8 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.context.annotation.Import;
 import org.springframework.orm.ObjectOptimisticLockingFailureException;
 
+import java.time.Year;
+import java.util.List;
 import java.util.Optional;
 
 @DataJpaTest
@@ -126,5 +131,66 @@ class OrdersIT {
 
         Assertions.assertThat(orders.exists(order.id())).isTrue();
         Assertions.assertThat(orders.exists(new OrderId())).isFalse();
+    }
+
+    @Test
+    void shouldListExistingOrdersByCustomerIdAndYear() {
+        Order order1 = OrderTestDataBuilder.someOrder().orderStatus(OrderStatus.PLACED).build();
+        orders.add(order1);
+
+        Order order2 = OrderTestDataBuilder.someOrder().orderStatus(OrderStatus.PLACED).build();
+        orders.add(order2);
+
+        Order order3 = OrderTestDataBuilder.someOrder().orderStatus(OrderStatus.CANCELED).build();
+        orders.add(order3);
+
+        Order order4 = OrderTestDataBuilder.someOrder().orderStatus(OrderStatus.DRAFT).build();
+        orders.add(order4);
+
+        CustomerId customerId = CustomerTestDataBuilder.DEFAULT_CUSTOMER_ID;
+        List<Order> listedOrders = this.orders.placedByCustomerInYear(customerId, Year.now());
+
+        Assertions.assertWith(listedOrders,
+                l -> Assertions.assertThat(listedOrders).isNotEmpty(),
+                l -> Assertions.assertThat(listedOrders).hasSize(2)
+        );
+
+        List<Order> newListedOrders = orders.placedByCustomerInYear(new CustomerId(), Year.now().minusYears(1));
+        Assertions.assertThat(newListedOrders).isEmpty();
+    }
+
+    @Test
+    void shouldReturnTotalSoldByCustomer() {
+        Order order1 = OrderTestDataBuilder.someOrder().orderStatus(OrderStatus.PAID).build();
+        Order order2 = OrderTestDataBuilder.someOrder().orderStatus(OrderStatus.PAID).build();
+        orders.add(order1);
+        orders.add(order2);
+
+        orders.add(OrderTestDataBuilder.someOrder().orderStatus(OrderStatus.CANCELED).build());
+        orders.add(OrderTestDataBuilder.someOrder().orderStatus(OrderStatus.PLACED).build());
+
+        Money expectedTotalAmount = order1.totalAmount().add(order2.totalAmount());
+
+        CustomerId customerId = CustomerTestDataBuilder.DEFAULT_CUSTOMER_ID;
+
+        Assertions.assertThat(orders.totalSoldForCustomer(customerId)).isEqualTo(expectedTotalAmount);
+        Assertions.assertThat(orders.totalSoldForCustomer(new CustomerId())).isEqualTo(Money.ZERO);
+
+    }
+
+    @Test
+    void shouldReturnSalesQuantityByCustomer() {
+        Order order1 = OrderTestDataBuilder.someOrder().orderStatus(OrderStatus.PAID).build();
+        Order order2 = OrderTestDataBuilder.someOrder().orderStatus(OrderStatus.PAID).build();
+        orders.add(order1);
+        orders.add(order2);
+
+        orders.add(OrderTestDataBuilder.someOrder().orderStatus(OrderStatus.CANCELED).build());
+        orders.add(OrderTestDataBuilder.someOrder().orderStatus(OrderStatus.PLACED).build());
+
+        CustomerId customerId = CustomerTestDataBuilder.DEFAULT_CUSTOMER_ID;
+
+        Assertions.assertThat(orders.salesQuantityByCustomerInYear(customerId, Year.now())).isEqualTo(2);
+        Assertions.assertThat(orders.salesQuantityByCustomerInYear(customerId, Year.now().minusYears(1))).isZero();
     }
 }
