@@ -9,6 +9,7 @@ import com.jonasesteves.algashop.ordering.domain.model.valueobject.id.CustomerId
 import com.jonasesteves.algashop.ordering.domain.model.valueobject.id.ProductId;
 import com.jonasesteves.algashop.ordering.domain.model.valueobject.id.ShoppingCartId;
 import com.jonasesteves.algashop.ordering.domain.model.valueobject.id.ShoppingCartItemId;
+import lombok.Builder;
 
 import java.time.OffsetDateTime;
 import java.util.*;
@@ -22,7 +23,8 @@ public class ShoppingCart implements AggregateRoot<ShoppingCartId> {
     private Set<ShoppingCartItem> items;
     private OffsetDateTime createdAt;
 
-    private ShoppingCart(ShoppingCartId id, CustomerId customerId, Money totalAmount, Quantity totalItems, OffsetDateTime createdAt, Set<ShoppingCartItem> items) {
+    @Builder(builderClassName = "ExistingShoppingCartBuilder", builderMethodName = "existing")
+    public ShoppingCart(ShoppingCartId id, CustomerId customerId, Money totalAmount, Quantity totalItems, OffsetDateTime createdAt, Set<ShoppingCartItem> items) {
         this.setId(id);
         this.setCustomerId(customerId);
         this.setTotalAmount(totalAmount);
