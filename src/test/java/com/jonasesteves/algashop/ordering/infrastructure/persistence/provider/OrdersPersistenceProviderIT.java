@@ -25,7 +25,7 @@ import org.springframework.transaction.annotation.Transactional;
         OrdersPersistenceProvider.class,
         OrderPersistenceEntityAssembler.class,
         OrderPersistenceEntityDisassembler.class,
-        CustomerPersistenceProvider.class,
+        CustomersPersistenceProvider.class,
         CustomerPersistenceEntityAssembler.class,
         CustomerPersistenceEntityDisassembler.class,
         SpringDataAuditingConfig.class
@@ -33,19 +33,19 @@ import org.springframework.transaction.annotation.Transactional;
 class OrdersPersistenceProviderIT {
     private final OrdersPersistenceProvider ordersPersistenceProvider;
     private final OrderPersistenceEntityRepository entityRepository;
-    private final CustomerPersistenceProvider customerPersistenceProvider;
+    private final CustomersPersistenceProvider customersPersistenceProvider;
 
     @Autowired
-    public OrdersPersistenceProviderIT(OrdersPersistenceProvider ordersPersistenceProvider, OrderPersistenceEntityRepository entityRepository, CustomerPersistenceProvider customerPersistenceProvider) {
+    public OrdersPersistenceProviderIT(OrdersPersistenceProvider ordersPersistenceProvider, OrderPersistenceEntityRepository entityRepository, CustomersPersistenceProvider customersPersistenceProvider) {
         this.ordersPersistenceProvider = ordersPersistenceProvider;
         this.entityRepository = entityRepository;
-        this.customerPersistenceProvider = customerPersistenceProvider;
+        this.customersPersistenceProvider = customersPersistenceProvider;
     }
 
     @BeforeEach
     void setup() {
-        if (!customerPersistenceProvider.exists(CustomerTestDataBuilder.DEFAULT_CUSTOMER_ID)) {
-            customerPersistenceProvider.add(CustomerTestDataBuilder.existingCustomer().build());
+        if (!customersPersistenceProvider.exists(CustomerTestDataBuilder.DEFAULT_CUSTOMER_ID)) {
+            customersPersistenceProvider.add(CustomerTestDataBuilder.existingCustomer().build());
         }
     }
 

@@ -86,7 +86,7 @@ class OrderPersistenceEntityAssemblerTest {
     }
 
     @Test
-    void givenOrderWithItems_whenMerge_shoulsRmoveTheExactItem() {
+    void givenOrderWithItems_whenMerge_shouldRemoveTheExactItem() {
         Order order = OrderTestDataBuilder.someOrder().withItems(true).build();
 
         Assertions.assertThat(order.items()).hasSize(2);

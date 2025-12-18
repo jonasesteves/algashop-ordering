@@ -11,9 +11,8 @@ import com.jonasesteves.algashop.ordering.infrastructure.persistence.assembler.C
 import com.jonasesteves.algashop.ordering.infrastructure.persistence.assembler.OrderPersistenceEntityAssembler;
 import com.jonasesteves.algashop.ordering.infrastructure.persistence.disassembler.CustomerPersistenceEntityDisassembler;
 import com.jonasesteves.algashop.ordering.infrastructure.persistence.disassembler.OrderPersistenceEntityDisassembler;
-import com.jonasesteves.algashop.ordering.infrastructure.persistence.provider.CustomerPersistenceProvider;
+import com.jonasesteves.algashop.ordering.infrastructure.persistence.provider.CustomersPersistenceProvider;
 import com.jonasesteves.algashop.ordering.infrastructure.persistence.provider.OrdersPersistenceProvider;
-import org.aspectj.weaver.ast.Or;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -31,7 +30,7 @@ import java.util.Optional;
         OrdersPersistenceProvider.class,
         OrderPersistenceEntityAssembler.class,
         OrderPersistenceEntityDisassembler.class,
-        CustomerPersistenceProvider.class,
+        CustomersPersistenceProvider.class,
         CustomerPersistenceEntityAssembler.class,
         CustomerPersistenceEntityDisassembler.class
 })

@@ -7,7 +7,7 @@ import com.jonasesteves.algashop.ordering.domain.model.valueobject.Phone;
 import com.jonasesteves.algashop.ordering.domain.model.valueobject.id.CustomerId;
 import com.jonasesteves.algashop.ordering.infrastructure.persistence.assembler.CustomerPersistenceEntityAssembler;
 import com.jonasesteves.algashop.ordering.infrastructure.persistence.disassembler.CustomerPersistenceEntityDisassembler;
-import com.jonasesteves.algashop.ordering.infrastructure.persistence.provider.CustomerPersistenceProvider;
+import com.jonasesteves.algashop.ordering.infrastructure.persistence.provider.CustomersPersistenceProvider;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,7 +20,7 @@ import java.util.UUID;
 
 @DataJpaTest
 @Import({
-        CustomerPersistenceProvider.class,
+        CustomersPersistenceProvider.class,
         CustomerPersistenceEntityAssembler.class,
         CustomerPersistenceEntityDisassembler.class
 })

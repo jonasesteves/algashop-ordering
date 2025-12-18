@@ -23,7 +23,7 @@ import java.util.Set;
 import java.util.UUID;
 
 @Entity
-@Table(name = "shopping_cart")
+@Table(name = "\"shopping_cart\"")
 @EntityListeners(AuditingEntityListener.class)
 public class ShoppingCartPersistenceEntity {
 
@@ -37,7 +37,7 @@ public class ShoppingCartPersistenceEntity {
     private BigDecimal totalAmount;
     private Integer totalItems;
 
-    @OneToMany(mappedBy = "shopping_cart", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "shoppingCart", cascade = CascadeType.ALL)
     private Set<ShoppingCartItemPersistenceEntity> items = new HashSet<>();
 
     @CreatedBy
@@ -201,7 +201,7 @@ public class ShoppingCartPersistenceEntity {
                 '}';
     }
 
-    public Builder builder() {
+    public static Builder builder() {
         return new Builder();
     }
 

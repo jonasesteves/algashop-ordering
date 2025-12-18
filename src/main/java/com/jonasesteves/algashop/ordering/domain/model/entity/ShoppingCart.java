@@ -22,15 +22,17 @@ public class ShoppingCart implements AggregateRoot<ShoppingCartId> {
     private Quantity totalItems;
     private Set<ShoppingCartItem> items;
     private OffsetDateTime createdAt;
+    private Long version;
 
     @Builder(builderClassName = "ExistingShoppingCartBuilder", builderMethodName = "existing")
-    public ShoppingCart(ShoppingCartId id, CustomerId customerId, Money totalAmount, Quantity totalItems, OffsetDateTime createdAt, Set<ShoppingCartItem> items) {
+    public ShoppingCart(ShoppingCartId id, CustomerId customerId, Money totalAmount, Quantity totalItems, OffsetDateTime createdAt, Set<ShoppingCartItem> items, Long version) {
         this.setId(id);
         this.setCustomerId(customerId);
         this.setTotalAmount(totalAmount);
         this.setTotalItems(totalItems);
         this.setCreatedAt(createdAt);
         this.setItems(items);
+        this.setVersion(version);
     }
 
     public static ShoppingCart startShopping(CustomerId customerId) {
@@ -40,7 +42,8 @@ public class ShoppingCart implements AggregateRoot<ShoppingCartId> {
                 Money.ZERO,
                 Quantity.ZERO,
                 OffsetDateTime.now(),
-                new HashSet<>()
+                new HashSet<>(),
+                null
         );
     }
 
@@ -157,6 +160,10 @@ public class ShoppingCart implements AggregateRoot<ShoppingCartId> {
         return createdAt;
     }
 
+    public Long version() {
+        return version;
+    }
+
     private void updateItem(ShoppingCartItem shoppingCartItem, Product product, Quantity quantity) {
         shoppingCartItem.refresh(product);
         shoppingCartItem.changeQuantity(shoppingCartItem.quantity().add(quantity));
@@ -199,6 +206,10 @@ public class ShoppingCart implements AggregateRoot<ShoppingCartId> {
     private void setCreatedAt(OffsetDateTime createdAt) {
         Objects.requireNonNull(createdAt);
         this.createdAt = createdAt;
+    }
+
+    private void setVersion(Long version) {
+        this.version = version;
     }
 
     @Override

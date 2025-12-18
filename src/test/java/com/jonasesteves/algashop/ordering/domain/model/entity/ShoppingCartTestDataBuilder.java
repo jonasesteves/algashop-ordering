@@ -6,11 +6,10 @@ import com.jonasesteves.algashop.ordering.domain.model.valueobject.id.CustomerId
 import com.jonasesteves.algashop.ordering.domain.model.valueobject.id.ShoppingCartId;
 
 public class ShoppingCartTestDataBuilder {
-
+    public static CustomerId customerId = CustomerTestDataBuilder.DEFAULT_CUSTOMER_ID;
     public static final ShoppingCartId DEFAULT_SHOPPING_CART_ID = new ShoppingCartId();
 
     public static ShoppingCart someShoppingCartWithProduct() {
-        CustomerId customerId = new CustomerId();
         ShoppingCart shoppingCart = ShoppingCart.startShopping(customerId);
 
         Product newProduct1 = ProductTestDataBuilder.someProduct().build();
@@ -21,7 +20,6 @@ public class ShoppingCartTestDataBuilder {
     }
 
     public static ShoppingCart someShoppingCartWithTwoProducts() {
-        CustomerId customerId = new CustomerId();
         ShoppingCart shoppingCart = ShoppingCart.startShopping(customerId);
 
         Product newProduct1 = ProductTestDataBuilder.someProduct().build();

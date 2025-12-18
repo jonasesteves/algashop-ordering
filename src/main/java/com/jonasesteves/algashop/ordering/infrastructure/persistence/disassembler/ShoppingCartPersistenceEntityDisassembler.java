@@ -26,11 +26,11 @@ public class ShoppingCartPersistenceEntityDisassembler {
                 .totalAmount(new Money(shoppingCartPersistenceEntity.getTotalAmount()))
                 .totalItems(new Quantity(shoppingCartPersistenceEntity.getTotalItems()))
                 .createdAt(shoppingCartPersistenceEntity.getCreatedAt())
-                .items(qq(shoppingCartPersistenceEntity.getItems()))
+                .items(toItemsDomainEntities(shoppingCartPersistenceEntity.getItems()))
                 .build();
     }
 
-    private Set<ShoppingCartItem> qq(Set<ShoppingCartItemPersistenceEntity> itemsSet) {
+    private Set<ShoppingCartItem> toItemsDomainEntities(Set<ShoppingCartItemPersistenceEntity> itemsSet) {
         return itemsSet.stream().map(this::toItemEntity).collect(Collectors.toSet());
     }
 

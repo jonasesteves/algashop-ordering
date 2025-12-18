@@ -19,14 +19,14 @@ import java.util.UUID;
 
 @Component
 @Transactional(readOnly = true)
-public class CustomerPersistenceProvider implements Customers {
+public class CustomersPersistenceProvider implements Customers {
 
     private final CustomerPersistenceEntityRepository repository;
     private final CustomerPersistenceEntityAssembler assembler;
     private final CustomerPersistenceEntityDisassembler disassembler;
     private final EntityManager entityManager;
 
-    public CustomerPersistenceProvider(
+    public CustomersPersistenceProvider(
             CustomerPersistenceEntityRepository repository,
             CustomerPersistenceEntityAssembler assembler,
             CustomerPersistenceEntityDisassembler disassembler,

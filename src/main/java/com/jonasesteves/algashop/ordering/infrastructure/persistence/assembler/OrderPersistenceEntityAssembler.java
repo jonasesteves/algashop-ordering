@@ -10,7 +10,6 @@ import com.jonasesteves.algashop.ordering.infrastructure.persistence.embeddable.
 import com.jonasesteves.algashop.ordering.infrastructure.persistence.embeddable.BillingEmbeddable;
 import com.jonasesteves.algashop.ordering.infrastructure.persistence.embeddable.RecipientEmbeddable;
 import com.jonasesteves.algashop.ordering.infrastructure.persistence.embeddable.ShippingEmbeddable;
-import com.jonasesteves.algashop.ordering.infrastructure.persistence.entity.CustomerPersistenceEntity;
 import com.jonasesteves.algashop.ordering.infrastructure.persistence.entity.OrderItemPersistenceEntity;
 import com.jonasesteves.algashop.ordering.infrastructure.persistence.entity.OrderPersistenceEntity;
 import com.jonasesteves.algashop.ordering.infrastructure.persistence.repository.CustomerPersistenceEntityRepository;

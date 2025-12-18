@@ -18,19 +18,19 @@ import java.util.UUID;
 
 @DataJpaTest
 @Import({
-        CustomerPersistenceProvider.class,
+        CustomersPersistenceProvider.class,
         CustomerPersistenceEntityAssembler.class,
         CustomerPersistenceEntityDisassembler.class,
         SpringDataAuditingConfig.class
 })
-class CustomerPersistenceProviderIT {
+class CustomersPersistenceProviderIT {
 
-    private final CustomerPersistenceProvider customerPersistenceProvider;
+    private final CustomersPersistenceProvider customersPersistenceProvider;
     private final CustomerPersistenceEntityRepository repository;
 
     @Autowired
-    CustomerPersistenceProviderIT(CustomerPersistenceProvider customerPersistenceProvider, CustomerPersistenceEntityRepository repository) {
-        this.customerPersistenceProvider = customerPersistenceProvider;
+    CustomersPersistenceProviderIT(CustomersPersistenceProvider customersPersistenceProvider, CustomerPersistenceEntityRepository repository) {
+        this.customersPersistenceProvider = customersPersistenceProvider;
         this.repository = repository;
     }
 
@@ -39,7 +39,7 @@ class CustomerPersistenceProviderIT {
         Customer customer = CustomerTestDataBuilder.brandNewCustomerBuild().build();
         UUID customerId = customer.id().value();
 
-        customerPersistenceProvider.add(customer);
+        customersPersistenceProvider.add(customer);
         CustomerPersistenceEntity customerPersistenceEntity = repository.findById(customerId).orElseThrow();
 
         Assertions.assertThat(customerPersistenceEntity.getCreatedByUserId()).isNotNull();
@@ -47,10 +47,10 @@ class CustomerPersistenceProviderIT {
         Assertions.assertThat(customerPersistenceEntity.getLastModifiedAt()).isNotNull();
         Assertions.assertThat(customerPersistenceEntity.getVersion()).isZero();
 
-        customer = customerPersistenceProvider.ofId(customer.id()).orElseThrow();
+        customer = customersPersistenceProvider.ofId(customer.id()).orElseThrow();
         String someEmail = "other@email.com";
         customer.changeEmail(new Email(someEmail));
-        customerPersistenceProvider.add(customer);
+        customersPersistenceProvider.add(customer);
 
         customerPersistenceEntity = repository.findById(customerId).orElseThrow();
 
@@ -64,10 +64,10 @@ class CustomerPersistenceProviderIT {
     @Test
     void shouldAddAndFindAndNotFailWhenNoTransaction() {
         Customer customer = CustomerTestDataBuilder.existingCustomer().build();
-        customerPersistenceProvider.add(customer);
+        customersPersistenceProvider.add(customer);
 
         Assertions.assertThatNoException().isThrownBy(
-                () -> customerPersistenceProvider.ofId(customer.id()).orElseThrow()
+                () -> customersPersistenceProvider.ofId(customer.id()).orElseThrow()
         );
     }
 }
