@@ -42,7 +42,7 @@ public class CustomerTestDataBuilder {
                 .phone(new Phone("555-111-2222"))
                 .document(new Document("0102-03-0405"))
                 .promotionNotificationsAllowed(false)
-                .loyaltyPoints(new LoyaltyPoints(10))
+                .loyaltyPoints(LoyaltyPoints.ZERO)
                 .archived(false)
                 .archivedAt(null)
                 .registeredAt(OffsetDateTime.now())

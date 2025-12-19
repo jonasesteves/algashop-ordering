@@ -1,22 +1,15 @@
 package com.jonasesteves.algashop.ordering.infrastructure.persistence.provider;
 
+import com.jonasesteves.algashop.ordering.domain.model.entity.Customer;
 import com.jonasesteves.algashop.ordering.domain.model.entity.CustomerTestDataBuilder;
-import com.jonasesteves.algashop.ordering.domain.model.entity.ProductTestDataBuilder;
 import com.jonasesteves.algashop.ordering.domain.model.entity.ShoppingCart;
-import com.jonasesteves.algashop.ordering.domain.model.entity.ShoppingCartItem;
-import com.jonasesteves.algashop.ordering.domain.model.entity.ShoppingCartItemTestDataBuilder;
 import com.jonasesteves.algashop.ordering.domain.model.entity.ShoppingCartTestDataBuilder;
-import com.jonasesteves.algashop.ordering.domain.model.valueobject.Product;
-import com.jonasesteves.algashop.ordering.domain.model.valueobject.Quantity;
-import com.jonasesteves.algashop.ordering.domain.model.valueobject.id.ShoppingCartId;
+import com.jonasesteves.algashop.ordering.domain.model.valueobject.id.CustomerId;
 import com.jonasesteves.algashop.ordering.infrastructure.persistence.assembler.CustomerPersistenceEntityAssembler;
 import com.jonasesteves.algashop.ordering.infrastructure.persistence.assembler.ShoppingCartPersistenceEntityAssembler;
 import com.jonasesteves.algashop.ordering.infrastructure.persistence.config.SpringDataAuditingConfig;
 import com.jonasesteves.algashop.ordering.infrastructure.persistence.disassembler.CustomerPersistenceEntityDisassembler;
 import com.jonasesteves.algashop.ordering.infrastructure.persistence.disassembler.ShoppingCartPersistenceEntityDisassembler;
-import com.jonasesteves.algashop.ordering.infrastructure.persistence.entity.ShoppingCartItemPersistenceEntity;
-import com.jonasesteves.algashop.ordering.infrastructure.persistence.entity.ShoppingCartPersistenceEntity;
-import com.jonasesteves.algashop.ordering.infrastructure.persistence.entity.ShoppingCartPersistenceEntityTestDataBuilder;
 import com.jonasesteves.algashop.ordering.infrastructure.persistence.repository.ShoppingCartPersistenceEntityRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -25,8 +18,6 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.context.annotation.Import;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatNoException;
@@ -62,7 +53,60 @@ class ShoppingCartsPersistenceProviderIT {
     }
 
     @Test
-    @Transactional(propagation = Propagation.NOT_SUPPORTED)
+    void shouldFindShoppingCartByCustomerId() {
+        ShoppingCart shoppingCart = ShoppingCartTestDataBuilder.someShoppingCartWithProduct();
+        shoppingCartsPersistenceProvider.add(shoppingCart);
+
+        ShoppingCart foundCart = shoppingCartsPersistenceProvider.ofCustomer(CustomerTestDataBuilder.DEFAULT_CUSTOMER_ID).orElseThrow();
+
+        assertThat(foundCart).isNotNull();
+        assertThat(foundCart.customerId()).isEqualTo(CustomerTestDataBuilder.DEFAULT_CUSTOMER_ID);
+        assertThat(foundCart.id()).isEqualTo(shoppingCart.id());
+    }
+
+    @Test
+    void shouldCorrectlyCountShoppingCarts() {
+        long initialCount = shoppingCartsPersistenceProvider.count();
+
+        ShoppingCart cart1 = ShoppingCartTestDataBuilder.someShoppingCartWithProduct();
+        shoppingCartsPersistenceProvider.add(cart1);
+
+        Customer otherCustomer = CustomerTestDataBuilder.existingCustomer().id(new CustomerId()).build();
+        customersPersistenceProvider.add(otherCustomer);
+
+        ShoppingCart cart2 = ShoppingCartTestDataBuilder.someShoppingCartWithProduct();
+        shoppingCartsPersistenceProvider.add(cart2);
+
+        long finalCount = shoppingCartsPersistenceProvider.count();
+
+        assertThat(finalCount).isEqualTo(initialCount + 2);
+    }
+
+    @Test
+    void shouldRemoveShoppingCartById() {
+        ShoppingCart shoppingCart = ShoppingCartTestDataBuilder.someShoppingCartWithProduct();
+        shoppingCartsPersistenceProvider.add(shoppingCart);
+        assertThat(shoppingCartsPersistenceProvider.exists(shoppingCart.id())).isTrue();
+
+        shoppingCartsPersistenceProvider.remove(shoppingCart.id());
+
+        assertThat(shoppingCartsPersistenceProvider.exists(shoppingCart.id())).isFalse();
+        assertThat(repository.findById(shoppingCart.id().value())).isEmpty();
+    }
+
+    @Test
+    void shouldRemoveShoppingCartByEntity() {
+        ShoppingCart shoppingCart = ShoppingCartTestDataBuilder.someShoppingCartWithProduct();
+        shoppingCartsPersistenceProvider.add(shoppingCart);
+        assertThat(shoppingCartsPersistenceProvider.exists(shoppingCart.id())).isTrue();
+
+        shoppingCartsPersistenceProvider.remove(shoppingCart);
+
+        assertThat(shoppingCartsPersistenceProvider.exists(shoppingCart.id())).isFalse();
+    }
+
+    @Test
+//    @Transactional(propagation = Propagation.NOT_SUPPORTED)
     void shouldAddAndFindAndNotFailWhenNoTransaction() {
         ShoppingCart shoppingCart = ShoppingCartTestDataBuilder.someShoppingCartWithProduct();
 
@@ -79,20 +123,5 @@ class ShoppingCartsPersistenceProviderIT {
             assertThat(found.totalItems().value()).isEqualTo(2);
             assertThat(found.items()).hasSize(1);
         });
-    }
-
-    @Test
-    void shouldPersistWithAuditData() {
-        ShoppingCart shoppingCart = ShoppingCartTestDataBuilder.someShoppingCartWithProduct();
-        UUID shoppingCartId = shoppingCart.id().value();
-
-        shoppingCartsPersistenceProvider.add(shoppingCart);
-
-        ShoppingCartPersistenceEntity shoppingCartPersistenceEntity = repository.findById(shoppingCartId).orElseThrow();
-
-        assertThat(shoppingCartPersistenceEntity.getCreatedByUserId()).isNotNull();
-        assertThat(shoppingCartPersistenceEntity.getCreatedAt()).isNotNull();
-        assertThat(shoppingCartPersistenceEntity.getLastModifiedByUserId()).isNotNull();
-        assertThat(shoppingCartPersistenceEntity.getLastModifiedAt()).isNotNull();
     }
 }

@@ -1,12 +1,9 @@
 package com.jonasesteves.algashop.ordering.infrastructure.persistence.repository;
 
 import com.jonasesteves.algashop.ordering.domain.model.entity.CustomerTestDataBuilder;
-import com.jonasesteves.algashop.ordering.domain.model.entity.ShoppingCart;
-import com.jonasesteves.algashop.ordering.domain.model.entity.ShoppingCartTestDataBuilder;
 import com.jonasesteves.algashop.ordering.infrastructure.persistence.config.SpringDataAuditingConfig;
 import com.jonasesteves.algashop.ordering.infrastructure.persistence.entity.CustomerPersistenceEntity;
 import com.jonasesteves.algashop.ordering.infrastructure.persistence.entity.CustomerPersistenceEntityTestDataBuilder;
-import com.jonasesteves.algashop.ordering.infrastructure.persistence.entity.ShoppingCartItemPersistenceEntity;
 import com.jonasesteves.algashop.ordering.infrastructure.persistence.entity.ShoppingCartPersistenceEntity;
 import com.jonasesteves.algashop.ordering.infrastructure.persistence.entity.ShoppingCartPersistenceEntityTestDataBuilder;
 import org.junit.jupiter.api.BeforeEach;
@@ -19,7 +16,6 @@ import org.springframework.context.annotation.Import;
 import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.*;
 
 @DataJpaTest
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
@@ -46,6 +42,42 @@ class ShoppingCartPersistenceEntityRepositoryIT {
                     CustomerPersistenceEntityTestDataBuilder.someCustomer().build()
             );
         }
+    }
+
+    @Test
+    void shouldPersist() {
+        ShoppingCartPersistenceEntity entity = ShoppingCartPersistenceEntityTestDataBuilder.existingShoppingCart()
+                .customer(customerPersistenceEntity)
+                .build();
+
+        shoppingCartPersistenceEntityRepository.saveAndFlush(entity);
+        assertThat(shoppingCartPersistenceEntityRepository.existsById(entity.getId())).isTrue();
+
+        ShoppingCartPersistenceEntity savedEntity = shoppingCartPersistenceEntityRepository.findById(entity.getId()).orElseThrow();
+
+        assertThat(savedEntity.getItems()).isNotEmpty();
+    }
+
+    @Test
+    void shouldCount() {
+        long shoppingCartsCount = shoppingCartPersistenceEntityRepository.count();
+        assertThat(shoppingCartsCount).isZero();
+    }
+
+    @Test
+    void shouldPersistWithAuditData() {
+        ShoppingCartPersistenceEntity entity = ShoppingCartPersistenceEntityTestDataBuilder.existingShoppingCart()
+                .customer(customerPersistenceEntity)
+                .build();
+
+        shoppingCartPersistenceEntityRepository.saveAndFlush(entity);
+
+        ShoppingCartPersistenceEntity shoppingCartPersistenceEntity = shoppingCartPersistenceEntityRepository.findById(entity.getId()).orElseThrow();
+
+        assertThat(shoppingCartPersistenceEntity.getCreatedByUserId()).isNotNull();
+        assertThat(shoppingCartPersistenceEntity.getCreatedAt()).isNotNull();
+        assertThat(shoppingCartPersistenceEntity.getLastModifiedByUserId()).isNotNull();
+        assertThat(shoppingCartPersistenceEntity.getLastModifiedAt()).isNotNull();
     }
 
 //    @Test

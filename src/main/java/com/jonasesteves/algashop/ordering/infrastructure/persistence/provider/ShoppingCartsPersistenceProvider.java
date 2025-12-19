@@ -35,17 +35,20 @@ public class ShoppingCartsPersistenceProvider implements ShoppingCarts {
 
     @Override
     public Optional<ShoppingCart> ofCustomer(CustomerId customerId) {
-        return Optional.empty();
+        Optional<ShoppingCartPersistenceEntity> possibleEntity = repository.findByCustomer_Id(customerId.value());
+        return possibleEntity.map(disassembler::toDomainEntity);
     }
 
     @Override
+    @Transactional(readOnly = false)
     public void remove(ShoppingCart shoppingCart) {
-
+        repository.deleteById(shoppingCart.id().value());
     }
 
     @Override
+    @Transactional(readOnly = false)
     public void remove(ShoppingCartId shoppingCartId) {
-
+        repository.deleteById(shoppingCartId.value());
     }
 
     @Override
@@ -56,7 +59,7 @@ public class ShoppingCartsPersistenceProvider implements ShoppingCarts {
 
     @Override
     public boolean exists(ShoppingCartId shoppingCartId) {
-        return false;
+        return repository.existsById(shoppingCartId.value());
     }
 
     @Override
@@ -71,7 +74,7 @@ public class ShoppingCartsPersistenceProvider implements ShoppingCarts {
 
     @Override
     public long count() {
-        return 0;
+        return repository.count();
     }
 
     private void update(ShoppingCart aggregateRoot, ShoppingCartPersistenceEntity shoppingCartPersistenceEntity) {
