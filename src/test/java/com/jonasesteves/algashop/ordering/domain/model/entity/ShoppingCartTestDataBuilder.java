@@ -9,6 +9,10 @@ public class ShoppingCartTestDataBuilder {
     public static CustomerId customerId = CustomerTestDataBuilder.DEFAULT_CUSTOMER_ID;
     public static final ShoppingCartId DEFAULT_SHOPPING_CART_ID = new ShoppingCartId();
 
+    public static ShoppingCart someEmptyShoppingCart() {
+        return ShoppingCart.startShopping(customerId);
+    }
+
     public static ShoppingCart someShoppingCartWithProduct() {
         ShoppingCart shoppingCart = ShoppingCart.startShopping(customerId);
 

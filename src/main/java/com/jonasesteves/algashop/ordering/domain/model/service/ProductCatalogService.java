@@ -1,0 +1,10 @@
+package com.jonasesteves.algashop.ordering.domain.model.service;
+
+import com.jonasesteves.algashop.ordering.domain.model.valueobject.Product;
+import com.jonasesteves.algashop.ordering.domain.model.valueobject.id.ProductId;
+
+import java.util.Optional;
+
+public interface ProductCatalogService {
+    Optional<Product> ofId(ProductId productId);
+}

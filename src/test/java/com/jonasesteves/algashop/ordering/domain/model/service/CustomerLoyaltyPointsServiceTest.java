@@ -28,15 +28,18 @@ class CustomerLoyaltyPointsServiceTest {
 
     @Test
     void givenValidCustomerWithLowTotalAmount_whenAddingPoints_shouldNotAccumulate() {
+        Customer customer = CustomerTestDataBuilder.existingCustomer().build();
         Product product = ProductTestDataBuilder.chocolate().build();
 
         Order order = OrderTestDataBuilder.someOrder().withItems(false).orderStatus(OrderStatus.DRAFT).build();
-        Customer customer = CustomerTestDataBuilder.existingCustomer().build();
         order.addItem(product, new Quantity(10));
+        order.place();
+        order.markAsPaid();
+        order.markAsReady();
 
         customerLoyaltyPointsService.addPoints(customer, order);
 
-        Assertions.assertThat(customer.loyaltyPoints()).isEqualTo(new LoyaltyPoints(60));
+        Assertions.assertThat(customer.loyaltyPoints()).isEqualTo(new LoyaltyPoints(0));
     }
 
 }
