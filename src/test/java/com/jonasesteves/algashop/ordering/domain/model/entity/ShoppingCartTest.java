@@ -109,7 +109,7 @@ class ShoppingCartTest {
         ShoppingCart shoppingCart = ShoppingCartTestDataBuilder.someShoppingCartWithProduct();
         ShoppingCartItem shoppingCartItem = shoppingCart.items().iterator().next();
 
-        Product product = ProductTestDataBuilder.chocolate().build();
+        Product product = ProductTestDataBuilder.someProductAlt().build();
         shoppingCart.addItem(product, new Quantity(1));
 
         shoppingCart.removeItem(shoppingCartItem.id());

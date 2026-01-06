@@ -31,7 +31,7 @@ public class OrderTestDataBuilder {
 
         if (this.withItems) {
             order.addItem(ProductTestDataBuilder.someProduct().build(), new Quantity(4));
-            order.addItem(ProductTestDataBuilder.chocolate().build(), new Quantity(3));
+            order.addItem(ProductTestDataBuilder.someProductAlt().build(), new Quantity(3));
         }
 
         switch (this.orderStatus) {

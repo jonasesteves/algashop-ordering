@@ -27,7 +27,7 @@ public class ShoppingCartTestDataBuilder {
         ShoppingCart shoppingCart = ShoppingCart.startShopping(customerId);
 
         Product newProduct1 = ProductTestDataBuilder.someProduct().build();
-        Product newProduct2 = ProductTestDataBuilder.chocolate().build();
+        Product newProduct2 = ProductTestDataBuilder.someProductAlt().build();
 
         shoppingCart.addItem(newProduct1, new Quantity(2));
         shoppingCart.addItem(newProduct2, new Quantity(3));

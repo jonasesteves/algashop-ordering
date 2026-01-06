@@ -31,7 +31,7 @@ public class ShoppingCartItemTestDataBuilder {
     }
 
     public static ShoppingCartItem.BrandNewShoppingCartItemBuilder someOtherShoppingCartItem() {
-        Product product = ProductTestDataBuilder.chocolate().build();
+        Product product = ProductTestDataBuilder.someProductAlt().build();
         Quantity quantity = new Quantity(2);
         ShoppingCartId shoppingCartId = new ShoppingCartId();
 

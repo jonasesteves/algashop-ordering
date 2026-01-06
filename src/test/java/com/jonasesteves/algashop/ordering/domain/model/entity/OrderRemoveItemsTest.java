@@ -22,7 +22,7 @@ class OrderRemoveItemsTest {
         OrderItem item = order.items().iterator().next();
 
         order.addItem(
-                ProductTestDataBuilder.chocolate().build(),
+                ProductTestDataBuilder.someProductAlt().build(),
                 new Quantity(3)
         );
 

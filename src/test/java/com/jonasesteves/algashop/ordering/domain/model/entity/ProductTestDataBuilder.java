@@ -13,7 +13,7 @@ public class ProductTestDataBuilder {
 
     public static Product.ProductBuilder someProduct() {
         return Product.builder()
-                .id(new ProductId())
+                .id(DEFAULT_PRODUCT_ID)
                 .name(new ProductName("Adamantium"))
                 .price(new Money("3000.00"))
                 .inStock(true);
@@ -27,7 +27,7 @@ public class ProductTestDataBuilder {
                 .inStock(false);
     }
 
-    public static Product.ProductBuilder chocolate() {
+    public static Product.ProductBuilder someProductAlt() {
         return Product.builder()
                 .id(new ProductId())
                 .name(new ProductName("Chocolate"))

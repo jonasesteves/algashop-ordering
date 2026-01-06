@@ -60,7 +60,7 @@ class OrderTest {
     void givenAnItemsSet_whenTryToChange_thenGenerateException() {
         Order order = Order.draft(new CustomerId());
 
-        order.addItem(ProductTestDataBuilder.chocolate().build(), new Quantity(2));
+        order.addItem(ProductTestDataBuilder.someProductAlt().build(), new Quantity(2));
 
         Set<OrderItem> items = order.items();
 
@@ -71,7 +71,7 @@ class OrderTest {
     void shouldRecalculateTotals() {
         Order order = Order.draft(new CustomerId());
 
-        order.addItem(ProductTestDataBuilder.chocolate().build(), new Quantity(2));
+        order.addItem(ProductTestDataBuilder.someProductAlt().build(), new Quantity(2));
         order.addItem(ProductTestDataBuilder.someProduct().build(), new Quantity(2));
 
         Assertions.assertThat(order.totalAmount()).isEqualTo(new Money("6001.98"));

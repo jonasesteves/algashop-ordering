@@ -65,7 +65,7 @@ class ShoppingCartUpdateProviderIT {
         ShoppingCart shoppingCart = ShoppingCartTestDataBuilder.someEmptyShoppingCart();
 
         Product product1 = ProductTestDataBuilder.someProduct().price(new Money("10000.00")).build();
-        Product product2 = ProductTestDataBuilder.chocolate().price(new Money("10.00")).build();
+        Product product2 = ProductTestDataBuilder.someProductAlt().price(new Money("10.00")).build();
 
         shoppingCart.addItem(product1, new Quantity(2));
         shoppingCart.addItem(product2, new Quantity(1));
@@ -96,7 +96,7 @@ class ShoppingCartUpdateProviderIT {
         ShoppingCart shoppingCart = ShoppingCartTestDataBuilder.someEmptyShoppingCart();
 
         Product product1 = ProductTestDataBuilder.someProduct().price(new Money("10000.00")).inStock(true).build();
-        Product product2 = ProductTestDataBuilder.chocolate().price(new Money("10.00")).inStock(true).build();
+        Product product2 = ProductTestDataBuilder.someProductAlt().price(new Money("10.00")).inStock(true).build();
 
         shoppingCart.addItem(product1, new Quantity(2));
         shoppingCart.addItem(product2, new Quantity(1));

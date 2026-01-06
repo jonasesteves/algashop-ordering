@@ -29,7 +29,7 @@ class CustomerLoyaltyPointsServiceTest {
     @Test
     void givenValidCustomerWithLowTotalAmount_whenAddingPoints_shouldNotAccumulate() {
         Customer customer = CustomerTestDataBuilder.existingCustomer().build();
-        Product product = ProductTestDataBuilder.chocolate().build();
+        Product product = ProductTestDataBuilder.someProductAlt().build();
 
         Order order = OrderTestDataBuilder.someOrder().withItems(false).orderStatus(OrderStatus.DRAFT).build();
         order.addItem(product, new Quantity(10));

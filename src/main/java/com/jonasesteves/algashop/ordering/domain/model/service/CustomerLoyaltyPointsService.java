@@ -4,11 +4,13 @@ import com.jonasesteves.algashop.ordering.domain.model.entity.Customer;
 import com.jonasesteves.algashop.ordering.domain.model.entity.Order;
 import com.jonasesteves.algashop.ordering.domain.model.exception.CantAddLoyaltyPointsOrderIsNotReadyException;
 import com.jonasesteves.algashop.ordering.domain.model.exception.OrderNotBelongsToCustomerException;
+import com.jonasesteves.algashop.ordering.domain.model.utility.DomainService;
 import com.jonasesteves.algashop.ordering.domain.model.valueobject.LoyaltyPoints;
 import com.jonasesteves.algashop.ordering.domain.model.valueobject.Money;
 
 import java.util.Objects;
 
+@DomainService //(M2 9.8)
 public class CustomerLoyaltyPointsService {
 
     private static final LoyaltyPoints basePoints = new LoyaltyPoints(5);
