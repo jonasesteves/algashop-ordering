@@ -15,8 +15,6 @@ import com.jonasesteves.algashop.ordering.domain.model.valueobject.id.ProductId;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.*;
-
 class BuyNowServiceTest {
 
     private final BuyNowService buyNowService = new BuyNowService();
