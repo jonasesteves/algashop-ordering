@@ -1,0 +1,30 @@
+package com.jonasesteves.algashop.ordering.infrastructure.persistence.shoppingcart;
+
+import com.jonasesteves.algashop.ordering.domain.model.shoppingcart.ShoppingCartProductAdjustmentService;
+import com.jonasesteves.algashop.ordering.domain.model.commons.Money;
+import com.jonasesteves.algashop.ordering.domain.model.product.ProductId;
+import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
+
+@Component
+public class ShoppingCartUpdateProvider implements ShoppingCartProductAdjustmentService {
+
+    private final ShoppingCartPersistenceEntityRepository repository;
+
+    public ShoppingCartUpdateProvider(ShoppingCartPersistenceEntityRepository repository) {
+        this.repository = repository;
+    }
+
+    @Override
+    @Transactional
+    public void adjustPrice(ProductId productId, Money updatedPrice) {
+        repository.updateItemPrice(productId.value(), updatedPrice.value());
+        repository.recalculateTotalsForCartsWithProduct(productId.value());
+    }
+
+    @Override
+    @Transactional
+    public void changeAvailability(ProductId productId, boolean available) {
+        repository.updateItemAvailability(productId.value(), available);
+    }
+}
