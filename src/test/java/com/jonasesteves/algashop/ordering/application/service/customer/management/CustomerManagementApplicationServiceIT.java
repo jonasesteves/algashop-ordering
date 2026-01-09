@@ -4,15 +4,18 @@ import com.jonasesteves.algashop.ordering.application.customer.management.Custom
 import com.jonasesteves.algashop.ordering.application.commons.AddressData;
 import com.jonasesteves.algashop.ordering.application.customer.management.CustomerInput;
 import com.jonasesteves.algashop.ordering.application.customer.management.CustomerOutput;
+import com.jonasesteves.algashop.ordering.application.customer.management.CustomerUpdateInput;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.util.UUID;
 
 @SpringBootTest
+@Transactional
 class CustomerManagementApplicationServiceIT {
 
     @Autowired
@@ -20,37 +23,56 @@ class CustomerManagementApplicationServiceIT {
 
     @Test
     void shouldRegister() {
-        CustomerInput input = CustomerInput.builder()
-                .firstName("Ronaldinho")
-                .lastName("Gaúcho")
-                .birthDate(LocalDate.of(1980, 1, 1))
-                .email("ronaldinho@gaucho.com")
-                .phone("585.855.2588")
-                .document("221-22-2223")
-                .promotionNotificationsAllowed(false)
-                .address(
-                        AddressData.builder()
-                                .number("10880")
-                                .street("Malibu Point")
-                                .complement("Penthouse")
-                                .neighborhood("Malibu Beach")
-                                .city("Malibu")
-                                .state("California")
-                                .zipCode("90265")
-                                .build()
-                )
-                .build();
+        CustomerInput input = CustomerInputTestDataBuilder.someCustomer().build();
         UUID customerId = customerManagementApplicationService.create(input);
 
         Assertions.assertThat(customerId).isNotNull();
 
         CustomerOutput customerOutput = customerManagementApplicationService.findById(customerId);
 
-        Assertions.assertThat(customerOutput.getId()).isEqualTo(customerId);
-        Assertions.assertThat(customerOutput.getFirstName()).isEqualTo("Ronaldinho");
-        Assertions.assertThat(customerOutput.getLastName()).isEqualTo("Gaúcho");
-        Assertions.assertThat(customerOutput.getEmail()).isEqualTo("ronaldinho@gaucho.com");
-        Assertions.assertThat(customerOutput.getBirthDate()).isEqualTo(LocalDate.of(1980, 1,1));
+        Assertions.assertThat(customerOutput).extracting(
+                CustomerOutput::getId,
+                CustomerOutput::getFirstName,
+                CustomerOutput::getLastName,
+                CustomerOutput::getEmail,
+                CustomerOutput::getBirthDate
+        ).containsExactly(
+                customerId,
+                "Ronaldinho",
+                "Gaúcho",
+                "ronaldinho@gaucho.com",
+                LocalDate.of(1980, 1,1)
+        );
+
+        Assertions.assertThat(customerOutput.getRegisteredAt()).isNotNull();
+    }
+
+    @Test
+    void shouldUpdate() {
+        CustomerInput input = CustomerInputTestDataBuilder.someCustomer().build();
+        CustomerUpdateInput customerUpdateInput = CustomerUpdateInputTestDataBuilder.someCustomerUpdate().build();
+
+        UUID customerId = customerManagementApplicationService.create(input);
+        Assertions.assertThat(customerId).isNotNull();
+
+        customerManagementApplicationService.update(customerId, customerUpdateInput);
+
+        CustomerOutput customerOutput = customerManagementApplicationService.findById(customerId);
+
+        Assertions.assertThat(customerOutput).extracting(
+                CustomerOutput::getId,
+                CustomerOutput::getFirstName,
+                CustomerOutput::getLastName,
+                CustomerOutput::getEmail,
+                CustomerOutput::getBirthDate
+        ).containsExactly(
+                customerId,
+                "Ronaldo",
+                "Fenômeno",
+                "ronaldinho@gaucho.com",
+                LocalDate.of(1980, 1,1)
+        );
+
         Assertions.assertThat(customerOutput.getRegisteredAt()).isNotNull();
     }
 }
