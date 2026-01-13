@@ -1,10 +1,12 @@
 package com.jonasesteves.algashop.ordering.application.service.customer.management;
 
-import com.jonasesteves.algashop.ordering.application.customer.management.CustomerManagementApplicationService;
-import com.jonasesteves.algashop.ordering.application.commons.AddressData;
 import com.jonasesteves.algashop.ordering.application.customer.management.CustomerInput;
+import com.jonasesteves.algashop.ordering.application.customer.management.CustomerManagementApplicationService;
 import com.jonasesteves.algashop.ordering.application.customer.management.CustomerOutput;
 import com.jonasesteves.algashop.ordering.application.customer.management.CustomerUpdateInput;
+import com.jonasesteves.algashop.ordering.domain.model.customer.CustomerArchivedException;
+import com.jonasesteves.algashop.ordering.domain.model.customer.CustomerId;
+import com.jonasesteves.algashop.ordering.domain.model.customer.CustomerNotFoundException;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -74,5 +76,59 @@ class CustomerManagementApplicationServiceIT {
         );
 
         Assertions.assertThat(customerOutput.getRegisteredAt()).isNotNull();
+    }
+
+    @Test
+    void shouldArchive() {
+        CustomerInput input = CustomerInputTestDataBuilder.someCustomer().build();
+        UUID customerId = customerManagementApplicationService.create(input);
+
+        customerManagementApplicationService.archive(customerId);
+        CustomerOutput customerOutput = customerManagementApplicationService.findById(customerId);
+
+        Assertions.assertThat(customerOutput).extracting(
+                CustomerOutput::getId,
+                CustomerOutput::getFirstName,
+                CustomerOutput::getLastName,
+                CustomerOutput::getBirthDate,
+                CustomerOutput::getDocument,
+                CustomerOutput::getPhone,
+                CustomerOutput::getArchived,
+                CustomerOutput::getPromotionNotificationsAllowed
+        ).containsExactly(
+                customerId,
+                "Anonymous",
+                "Anonymous",
+                null,
+                "000-00-0000",
+                "000-000-0000",
+                true,
+                false
+        );
+        Assertions.assertWith(customerOutput,
+                c -> Assertions.assertThat(c.getArchivedAt()).isNotNull(),
+                c -> Assertions.assertThat(c.getAddress().getNumber()).isEqualTo("Anonymous"),
+                c -> Assertions.assertThat(c.getAddress().getComplement()).isNull()
+        );
+    }
+
+    @Test
+    void givenUnexistentCustomer_whenTryArchive_shouldGenerateException() {
+        UUID customerId = new CustomerId().value();
+        Assertions.assertThatExceptionOfType(CustomerNotFoundException.class).isThrownBy(
+                () -> customerManagementApplicationService.archive(customerId)
+        );
+    }
+
+    @Test
+    void givenArchivedCustomer_whenTryArchive_shouldGenerateException() {
+        CustomerInput input = CustomerInputTestDataBuilder.someCustomer().build();
+        UUID customerId = customerManagementApplicationService.create(input);
+
+        customerManagementApplicationService.archive(customerId);
+
+        Assertions.assertThatExceptionOfType(CustomerArchivedException.class).isThrownBy(
+                () -> customerManagementApplicationService.archive(customerId)
+        );
     }
 }

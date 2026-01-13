@@ -16,21 +16,21 @@ import org.springframework.stereotype.Component;
 @Component
 public class CustomerPersistenceEntityDisassembler {
 
-    public Customer toDomain(CustomerPersistenceEntity customerPersistenceEntity) {
+    public Customer toDomain(CustomerPersistenceEntity entity) {
         return Customer.existing()
-                .id(new CustomerId(customerPersistenceEntity.getId()))
-                .fullName(new FullName(customerPersistenceEntity.getFirstName(), customerPersistenceEntity.getLastName()))
-                .birthDate(new BirthDate(customerPersistenceEntity.getBirthDate()))
-                .email(new Email(customerPersistenceEntity.getEmail()))
-                .phone(new Phone(customerPersistenceEntity.getPhone()))
-                .document(new Document(customerPersistenceEntity.getDocument()))
-                .promotionNotificationsAllowed(customerPersistenceEntity.getPromotionNotificationsAllowed())
-                .archived(customerPersistenceEntity.getArchived())
-                .registeredAt(customerPersistenceEntity.getRegisteredAt())
-                .archivedAt(customerPersistenceEntity.getArchivedAt())
-                .loyaltyPoints(new LoyaltyPoints(customerPersistenceEntity.getLoyaltyPoints()))
-                .address(this.address(customerPersistenceEntity.getAddress()))
-                .version(customerPersistenceEntity.getVersion())
+                .id(new CustomerId(entity.getId()))
+                .fullName(new FullName(entity.getFirstName(), entity.getLastName()))
+                .birthDate(entity.getBirthDate() != null ? new BirthDate(entity.getBirthDate()) : null)
+                .email(new Email(entity.getEmail()))
+                .phone(new Phone(entity.getPhone()))
+                .document(new Document(entity.getDocument()))
+                .promotionNotificationsAllowed(entity.getPromotionNotificationsAllowed())
+                .archived(entity.getArchived())
+                .registeredAt(entity.getRegisteredAt())
+                .archivedAt(entity.getArchivedAt())
+                .loyaltyPoints(new LoyaltyPoints(entity.getLoyaltyPoints()))
+                .address(this.address(entity.getAddress()))
+                .version(entity.getVersion())
                 .build();
     }
 
