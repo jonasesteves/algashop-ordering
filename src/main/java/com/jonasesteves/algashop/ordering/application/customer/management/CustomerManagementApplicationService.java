@@ -67,11 +67,11 @@ public class CustomerManagementApplicationService {
     }
 
     @Transactional
-    public void update(UUID ranCustomerId, CustomerUpdateInput input) {
-        Objects.requireNonNull(ranCustomerId);
+    public void update(UUID customerId, CustomerUpdateInput input) {
+        Objects.requireNonNull(customerId);
         Objects.requireNonNull(input);
 
-        Customer customer = customers.ofId(new CustomerId(ranCustomerId)).orElseThrow(CustomerNotFoundException::new);
+        Customer customer = customers.ofId(new CustomerId(customerId)).orElseThrow(CustomerNotFoundException::new);
 
         customer.changeName(new FullName(input.getFirstName(), input.getLastName()));
         customer.changePhone(new Phone(input.getPhone()));
@@ -102,6 +102,15 @@ public class CustomerManagementApplicationService {
         Objects.requireNonNull(customerId);
         Customer customer = customers.ofId(new CustomerId(customerId)).orElseThrow(CustomerNotFoundException::new);
         customer.archive();
+        customers.add(customer);
+    }
+
+    @Transactional
+    public void changeEmail(UUID customerId, String newEmail) {
+        Objects.requireNonNull(customerId);
+        Customer customer = customers.ofId(new CustomerId(customerId)).orElseThrow(CustomerNotFoundException::new);
+        Email email = new Email(newEmail);
+        customerRegistrationService.changeEmail(customer, email);
         customers.add(customer);
     }
 }

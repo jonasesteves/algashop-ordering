@@ -5,6 +5,7 @@ import com.jonasesteves.algashop.ordering.application.customer.management.Custom
 import com.jonasesteves.algashop.ordering.application.customer.management.CustomerOutput;
 import com.jonasesteves.algashop.ordering.application.customer.management.CustomerUpdateInput;
 import com.jonasesteves.algashop.ordering.domain.model.customer.CustomerArchivedException;
+import com.jonasesteves.algashop.ordering.domain.model.customer.CustomerEmailIsInUseException;
 import com.jonasesteves.algashop.ordering.domain.model.customer.CustomerId;
 import com.jonasesteves.algashop.ordering.domain.model.customer.CustomerNotFoundException;
 import org.assertj.core.api.Assertions;
@@ -79,6 +80,19 @@ class CustomerManagementApplicationServiceIT {
     }
 
     @Test
+    void shouldUpdateCustomerEmail() {
+        CustomerInput input = CustomerInputTestDataBuilder.someCustomer().build();
+        UUID customerId = customerManagementApplicationService.create(input);
+
+        String newEmail = "new@email.com";
+        customerManagementApplicationService.changeEmail(customerId, newEmail);
+
+        CustomerOutput customerOutput = customerManagementApplicationService.findById(customerId);
+
+        Assertions.assertThat(customerOutput.getEmail()).isEqualTo(newEmail);
+    }
+
+    @Test
     void shouldArchive() {
         CustomerInput input = CustomerInputTestDataBuilder.someCustomer().build();
         UUID customerId = customerManagementApplicationService.create(input);
@@ -121,6 +135,15 @@ class CustomerManagementApplicationServiceIT {
     }
 
     @Test
+    void givenUnexistentCustomer_whenTryChangeEmail_shouldGenerateException() {
+        UUID customerId = new CustomerId().value();
+        String newEmail = "new@email.com";
+        Assertions.assertThatExceptionOfType(CustomerNotFoundException.class).isThrownBy(
+                () -> customerManagementApplicationService.changeEmail(customerId, newEmail)
+        );
+    }
+
+    @Test
     void givenArchivedCustomer_whenTryArchive_shouldGenerateException() {
         CustomerInput input = CustomerInputTestDataBuilder.someCustomer().build();
         UUID customerId = customerManagementApplicationService.create(input);
@@ -129,6 +152,46 @@ class CustomerManagementApplicationServiceIT {
 
         Assertions.assertThatExceptionOfType(CustomerArchivedException.class).isThrownBy(
                 () -> customerManagementApplicationService.archive(customerId)
+        );
+    }
+
+    @Test
+    void givenArchivedCustomer_whenTryChangeEmail_shouldGenerateException() {
+        CustomerInput input = CustomerInputTestDataBuilder.someCustomer().build();
+        UUID customerId = customerManagementApplicationService.create(input);
+
+        customerManagementApplicationService.archive(customerId);
+        String newEmail = "new@email.com";
+
+        Assertions.assertThatExceptionOfType(CustomerArchivedException.class).isThrownBy(
+                () -> customerManagementApplicationService.changeEmail(customerId, newEmail)
+        );
+    }
+
+    @Test
+    void givenCustomer_whenTryChangeEmailWithInvalidEmail_shouldGenerateException() {
+        CustomerInput input = CustomerInputTestDataBuilder.someCustomer().build();
+        UUID customerId = customerManagementApplicationService.create(input);
+
+        customerManagementApplicationService.archive(customerId);
+        String newEmail = "invalid.email";
+
+        Assertions.assertThatExceptionOfType(IllegalArgumentException.class).isThrownBy(
+                () -> customerManagementApplicationService.changeEmail(customerId, newEmail)
+        );
+    }
+
+    @Test
+    void givenCustomer_whenTryChangeEmailToAnExistentEmail_shouldGenerateException() {
+        String existentEmail = "existent@email.com";
+        CustomerInput existent = CustomerInputTestDataBuilder.someCustomer().email(existentEmail).build();
+        customerManagementApplicationService.create(existent);
+
+        CustomerInput input = CustomerInputTestDataBuilder.someCustomer().build();
+        UUID customerId = customerManagementApplicationService.create(input);
+
+        Assertions.assertThatExceptionOfType(CustomerEmailIsInUseException.class).isThrownBy(
+                () -> customerManagementApplicationService.changeEmail(customerId, existentEmail)
         );
     }
 }
