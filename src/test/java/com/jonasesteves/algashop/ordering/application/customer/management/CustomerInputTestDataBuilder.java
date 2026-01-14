@@ -1,7 +1,6 @@
-package com.jonasesteves.algashop.ordering.application.service.customer.management;
+package com.jonasesteves.algashop.ordering.application.customer.management;
 
 import com.jonasesteves.algashop.ordering.application.commons.AddressData;
-import com.jonasesteves.algashop.ordering.application.customer.management.CustomerInput;
 
 import java.time.LocalDate;
 

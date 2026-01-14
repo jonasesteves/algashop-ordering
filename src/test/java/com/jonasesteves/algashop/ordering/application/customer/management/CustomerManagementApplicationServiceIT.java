@@ -1,9 +1,5 @@
-package com.jonasesteves.algashop.ordering.application.service.customer.management;
+package com.jonasesteves.algashop.ordering.application.customer.management;
 
-import com.jonasesteves.algashop.ordering.application.customer.management.CustomerInput;
-import com.jonasesteves.algashop.ordering.application.customer.management.CustomerManagementApplicationService;
-import com.jonasesteves.algashop.ordering.application.customer.management.CustomerOutput;
-import com.jonasesteves.algashop.ordering.application.customer.management.CustomerUpdateInput;
 import com.jonasesteves.algashop.ordering.domain.model.customer.CustomerArchivedException;
 import com.jonasesteves.algashop.ordering.domain.model.customer.CustomerEmailIsInUseException;
 import com.jonasesteves.algashop.ordering.domain.model.customer.CustomerId;

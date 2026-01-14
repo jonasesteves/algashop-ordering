@@ -240,7 +240,7 @@ public class Customer implements AggregateRoot<CustomerId> {
     }
 
     private void verifyIfChangeable() {
-        if (this.isArchived()) {
+        if (Boolean.TRUE.equals(this.isArchived())) {
             throw new CustomerArchivedException();
         }
     }
