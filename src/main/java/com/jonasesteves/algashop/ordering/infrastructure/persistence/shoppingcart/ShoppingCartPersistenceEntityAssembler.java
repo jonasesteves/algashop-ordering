@@ -28,7 +28,8 @@ public class ShoppingCartPersistenceEntityAssembler {
         shoppingCartPersistenceEntity.setId(shoppingCart.id().value());
         shoppingCartPersistenceEntity.setTotalAmount(shoppingCart.totalAmount().value());
         shoppingCartPersistenceEntity.setTotalItems(shoppingCart.totalItems().value());
-        shoppingCartPersistenceEntity.setVersion(shoppingCart.version());
+        shoppingCartPersistenceEntity.setCreatedAt(shoppingCart.createdAt());
+//        shoppingCartPersistenceEntity.setVersion(shoppingCart.version());
 
         Set<ShoppingCartItemPersistenceEntity> mergedItems = mergeItems(shoppingCartPersistenceEntity, shoppingCart);
         shoppingCartPersistenceEntity.replaceItems(mergedItems);

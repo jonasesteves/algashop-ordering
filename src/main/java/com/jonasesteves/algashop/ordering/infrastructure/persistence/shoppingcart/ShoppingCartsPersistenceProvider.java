@@ -59,7 +59,7 @@ public class ShoppingCartsPersistenceProvider implements ShoppingCarts {
     }
 
     @Override
-    @Transactional(readOnly = true)
+    @Transactional(readOnly = false)
     public void add(ShoppingCart aggregateRoot) {
         UUID shoppingCartId = aggregateRoot.id().value();
         repository.findById(shoppingCartId).ifPresentOrElse(
