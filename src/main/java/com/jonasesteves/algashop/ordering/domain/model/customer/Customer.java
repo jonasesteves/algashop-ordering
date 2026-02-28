@@ -64,7 +64,7 @@ public class Customer extends AbstractEventSourceEntity implements AggregateRoot
                 address,
                 null
         );
-        customer.publishDomainEvent(new CustomerRegisteredEvent(customer.id(), customer.registeredAt()));
+        customer.publishDomainEvent(new CustomerRegisteredEvent(customer.id(), customer.registeredAt(), customer.fullName(), customer.email()));
         return customer;
     }
 

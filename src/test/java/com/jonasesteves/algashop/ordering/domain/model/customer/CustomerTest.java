@@ -94,7 +94,7 @@ class CustomerTest {
     @Test
     void given_validDate_whenCreateBrandNewCustomer_shouldGenerateCustomerRegisteredEvent() {
         Customer customer = CustomerTestDataBuilder.brandNewCustomerBuild().build();
-        CustomerRegisteredEvent event = new CustomerRegisteredEvent(customer.id(), customer.registeredAt());
+        CustomerRegisteredEvent event = new CustomerRegisteredEvent(customer.id(), customer.registeredAt(), customer.fullName(), customer.email());
         Assertions.assertThat(customer.domainEvents()).contains(event);
     }
 

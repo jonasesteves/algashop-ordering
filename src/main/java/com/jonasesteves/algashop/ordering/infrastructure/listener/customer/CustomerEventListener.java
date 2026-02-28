@@ -1,5 +1,7 @@
 package com.jonasesteves.algashop.ordering.infrastructure.listener.customer;
 
+import com.jonasesteves.algashop.ordering.application.customer.notification.CustomerNotificationService;
+import com.jonasesteves.algashop.ordering.application.customer.notification.CustomerNotificationService.NotifyNewRegistretionInput;
 import com.jonasesteves.algashop.ordering.domain.model.customer.CustomerArchivedEvent;
 import com.jonasesteves.algashop.ordering.domain.model.customer.CustomerRegisteredEvent;
 import lombok.extern.slf4j.Slf4j;
@@ -10,14 +12,17 @@ import org.springframework.stereotype.Component;
 @Slf4j
 public class CustomerEventListener {
 
-    @EventListener
-    public void listen(CustomerRegisteredEvent event) {
-        log.info("CustomerRegisteredEvent listen 1");
+    private final CustomerNotificationService customerNotificationService;
+
+    public CustomerEventListener(CustomerNotificationService customerNotificationService) {
+        this.customerNotificationService = customerNotificationService;
     }
 
     @EventListener
-    public void listenSecondary(CustomerRegisteredEvent event) {
-        log.info("CustomerRegisteredEvent listen 2");
+    public void listen(CustomerRegisteredEvent event) {
+        log.info("CustomerRegisteredEvent listen 1");
+        NotifyNewRegistretionInput input = new NotifyNewRegistretionInput(event.customerId().value(), event.fullName().firstName(), event.email().value());
+        customerNotificationService.notifyNewRegistration(input);
     }
 
     @EventListener
