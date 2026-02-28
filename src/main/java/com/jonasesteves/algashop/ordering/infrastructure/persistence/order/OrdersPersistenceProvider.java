@@ -60,6 +60,7 @@ public class OrdersPersistenceProvider implements Orders {
                     insert(aggregateRoot);
                 }
         );
+        aggregateRoot.clearDomainEvents();
     }
 
     @Override
