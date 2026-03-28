@@ -37,6 +37,8 @@ public class ShoppingCartPersistenceEntityAssembler {
         var customerPersistenceEntity = customerPersistenceEntityRepository.getReferenceById(shoppingCart.customerId().value());
         shoppingCartPersistenceEntity.setCustomer(customerPersistenceEntity);
 
+        shoppingCartPersistenceEntity.addEvents(shoppingCart.domainEvents());
+
         return shoppingCartPersistenceEntity;
     }
 
