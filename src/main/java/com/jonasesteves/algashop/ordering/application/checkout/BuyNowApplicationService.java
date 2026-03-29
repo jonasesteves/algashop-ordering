@@ -2,7 +2,10 @@ package com.jonasesteves.algashop.ordering.application.checkout;
 
 import com.jonasesteves.algashop.ordering.domain.model.commons.Quantity;
 import com.jonasesteves.algashop.ordering.domain.model.commons.ZipCode;
+import com.jonasesteves.algashop.ordering.domain.model.customer.Customer;
 import com.jonasesteves.algashop.ordering.domain.model.customer.CustomerId;
+import com.jonasesteves.algashop.ordering.domain.model.customer.CustomerNotFoundException;
+import com.jonasesteves.algashop.ordering.domain.model.customer.Customers;
 import com.jonasesteves.algashop.ordering.domain.model.order.Billing;
 import com.jonasesteves.algashop.ordering.domain.model.order.BuyNowService;
 import com.jonasesteves.algashop.ordering.domain.model.order.Order;
@@ -28,15 +31,17 @@ public class BuyNowApplicationService {
     private final ShippingCostService shippingCostService;
     private final OriginAddressService originAddressService;
     private final Orders orders;
+    private final Customers customers;
     private final ShippingInputDisassembler shippingInputDisassembler;
     private final BillingInputDisassembler billingInputDisassembler;
 
-    public BuyNowApplicationService(BuyNowService buyNowService, ProductCatalogService productCatalogService, ShippingCostService shippingCostService, OriginAddressService originAddressService, Orders orders, ShippingInputDisassembler shippingInputDisassembler, BillingInputDisassembler billingInputDisassembler) {
+    public BuyNowApplicationService(BuyNowService buyNowService, ProductCatalogService productCatalogService, ShippingCostService shippingCostService, OriginAddressService originAddressService, Orders orders, Customers customers, ShippingInputDisassembler shippingInputDisassembler, BillingInputDisassembler billingInputDisassembler) {
         this.buyNowService = buyNowService;
         this.productCatalogService = productCatalogService;
         this.shippingCostService = shippingCostService;
         this.originAddressService = originAddressService;
         this.orders = orders;
+        this.customers = customers;
         this.shippingInputDisassembler = shippingInputDisassembler;
         this.billingInputDisassembler = billingInputDisassembler;
     }
@@ -48,6 +53,7 @@ public class BuyNowApplicationService {
         PaymentMethod paymentMethod = PaymentMethod.valueOf(input.getPaymentMethod());
         CustomerId customerId = new CustomerId(input.getCustomerId());
         Quantity quantity = new Quantity(input.getQuantity());
+        Customer customer = customers.ofId(customerId).orElseThrow(CustomerNotFoundException::new);
         Product product = findProduct(new ProductId(input.getProductId()));
 
         ShippingCostService.CalculationResult shippingCalculationResult = calculateShippingCost(input.getShipping());
@@ -55,7 +61,7 @@ public class BuyNowApplicationService {
         Shipping shipping = shippingInputDisassembler.toDomainModel(input.getShipping(), shippingCalculationResult);
         Billing billing = billingInputDisassembler.toDomainModel(input.getBilling());
 
-        Order order = buyNowService.buyNow(product, customerId, billing, shipping, quantity, paymentMethod);
+        Order order = buyNowService.buyNow(product, customer, billing, shipping, quantity, paymentMethod);
         orders.add(order);
 
         return order.id().toString();
