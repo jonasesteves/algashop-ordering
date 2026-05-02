@@ -1,6 +1,7 @@
 package com.jonasesteves.algashop.ordering.infrastructure.beans;
 
-import com.jonasesteves.algashop.ordering.domain.model.CustomerHaveFreeShippingSpecification;
+import com.jonasesteves.algashop.ordering.domain.model.customer.LoyaltyPoints;
+import com.jonasesteves.algashop.ordering.domain.model.order.CustomerHasFreeShippingSpecification;
 import com.jonasesteves.algashop.ordering.domain.model.order.Orders;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -9,12 +10,12 @@ import org.springframework.context.annotation.Configuration;
 public class SpecificationBeansConfig {
     /* M2 14.3 */
     @Bean
-    public CustomerHaveFreeShippingSpecification customerHaveFreeShippingSpecification(Orders orders) {
-        return new CustomerHaveFreeShippingSpecification(
-                100,
-                2000,
+    public CustomerHasFreeShippingSpecification customerHaveFreeShippingSpecification(Orders orders) {
+        return new CustomerHasFreeShippingSpecification(
+                orders,
+                new LoyaltyPoints(100),
                 2L,
-                orders
-                );
+                new LoyaltyPoints(2000)
+        );
     }
 }

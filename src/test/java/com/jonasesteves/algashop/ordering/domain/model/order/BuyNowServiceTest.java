@@ -1,6 +1,5 @@
 package com.jonasesteves.algashop.ordering.domain.model.order;
 
-import com.jonasesteves.algashop.ordering.domain.model.CustomerHaveFreeShippingSpecification;
 import com.jonasesteves.algashop.ordering.domain.model.customer.Customer;
 import com.jonasesteves.algashop.ordering.domain.model.customer.CustomerTestDataBuilder;
 import com.jonasesteves.algashop.ordering.domain.model.customer.LoyaltyPoints;
@@ -32,19 +31,19 @@ class BuyNowServiceTest {
     private Orders orders;
 
     /*
-    * Não é possível fazer com @Mock porque CustomerHaveFreeShippingSpecification
+    * Não é possível fazer com @Mock porque CustomerHasFreeShippingSpecification
     * possui valores primitivos que não são beans.
     * @Mock
-    * private CustomerHaveFreeShippingSpecification customerHaveFreeShippingSpecification;
+    * private CustomerHasFreeShippingSpecification customerHasFreeShippingSpecification;
     */
 
     @BeforeEach
     void setup() {
-        var specification = new CustomerHaveFreeShippingSpecification(
-                100,
-                2000,
+        var specification = new CustomerHasFreeShippingSpecification(
+                orders,
+                new LoyaltyPoints(100),
                 2L,
-                orders
+                new LoyaltyPoints(2000)
         );
         buyNowService = new BuyNowService(specification);
     }

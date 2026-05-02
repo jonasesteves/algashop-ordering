@@ -1,6 +1,5 @@
 package com.jonasesteves.algashop.ordering.domain.model.order;
 
-import com.jonasesteves.algashop.ordering.domain.model.CustomerHaveFreeShippingSpecification;
 import com.jonasesteves.algashop.ordering.domain.model.DomainService;
 import com.jonasesteves.algashop.ordering.domain.model.commons.Money;
 import com.jonasesteves.algashop.ordering.domain.model.commons.Quantity;
@@ -10,10 +9,10 @@ import com.jonasesteves.algashop.ordering.domain.model.product.Product;
 @DomainService
 public class BuyNowService {
 
-    private final CustomerHaveFreeShippingSpecification customerHaveFreeShippingSpecification;
+    private final CustomerHasFreeShippingSpecification customerHasFreeShippingSpecification;
 
-    public BuyNowService(CustomerHaveFreeShippingSpecification customerHaveFreeShippingSpecification) {
-        this.customerHaveFreeShippingSpecification = customerHaveFreeShippingSpecification;
+    public BuyNowService(CustomerHasFreeShippingSpecification customerHasFreeShippingSpecification) {
+        this.customerHasFreeShippingSpecification = customerHasFreeShippingSpecification;
     }
 
     public Order buyNow(Product product, Customer customer, Billing billing, Shipping shipping, Quantity quantity, PaymentMethod paymentMethod) {
@@ -37,6 +36,6 @@ public class BuyNowService {
     }
 
     private boolean haveFreeShipping(Customer customer) {
-        return customerHaveFreeShippingSpecification.isSatisfiedBy(customer);
+        return customerHasFreeShippingSpecification.isSatisfiedBy(customer);
     }
 }
