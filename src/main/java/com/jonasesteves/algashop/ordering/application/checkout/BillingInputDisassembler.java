@@ -1,6 +1,7 @@
 package com.jonasesteves.algashop.ordering.application.checkout;
 
 import com.jonasesteves.algashop.ordering.application.commons.AddressData;
+import com.jonasesteves.algashop.ordering.application.order.query.BillingData;
 import com.jonasesteves.algashop.ordering.domain.model.commons.Address;
 import com.jonasesteves.algashop.ordering.domain.model.commons.Document;
 import com.jonasesteves.algashop.ordering.domain.model.commons.Email;
